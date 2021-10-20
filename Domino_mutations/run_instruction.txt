@@ -4,9 +4,9 @@ time iterative_solver <path to file> example_alus/stateful_alus/tofino.alu examp
 2. Blue decrease:
 time iterative_solver <path to file> example_alus/stateful_alus/tofino.alu example_alus/stateless_alus/stateless_alu_for_tofino.alu 2 3 "0,1,2,3,10" 10 --state-groups 0 1 --input-packet 0 1 --parallel-sketch
 3. conga:
-
+time iterative_solver <path to file> example_alus/stateful_alus/tofino.alu example_alus/stateless_alus/stateless_alu_for_tofino.alu 1 2 "0,1,2,3" 10 --state-groups 0 --input-packet 3 4 --parallel-sketch
 4. flowlet:
-
+time iterative_solver <path to file> example_alus/stateful_alus/tofino.alu example_alus/stateless_alus/stateless_alu_for_tofino.alu 2 5 "0,1,2,3,5" 10 --pkt-fields 2 --state-groups 0 1 --input-packet 0 1 --parallel-sketch
 5. marple new flow:
 time iterative_solver <path to file> example_alus/stateful_alus/tofino.alu example_alus/stateless_alus/stateless_alu_for_tofino.alu 1 1 "0,1,2,3" 10 --state-groups 0 --input-packet 0 --parallel-sketch
 6. marple tcp nmo:
@@ -20,4 +20,4 @@ time iterative_solver <path to file> example_alus/stateful_alus/tofino.alu examp
 9. snap heavy hitter:
 time iterative_solver <path to file> example_alus/stateful_alus/tofino.alu example_alus/stateless_alus/stateless_alu_for_tofino.alu 1 1 "0,1,2,3" 10 --state-groups 0 --input-packet 0 --parallel-sketch
 10. dns ttl change:
-
+time iterative_solver <path to file> example_alus/stateful_alus/tofino.alu example_alus/stateless_alus/stateless_alu_for_tofino.alu 2 2 "0,1,2,3" 10 --state-groups 0 1 2 --input-packet 2 --parallel-sketch
