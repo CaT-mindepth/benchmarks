@@ -14,7 +14,7 @@ time iterative_solver <path to file>  example_alus/stateful_alus/tofino.alu exam
 7. rcp:
 time iterative_solver <path to file> example_alus/stateful_alus/tofino.alu example_alus/stateless_alus/stateless_alu_for_tofino.alu 1 1 "0,1,2,3,30" 10 --state-groups 0 --input-packet 0 --parallel-sketch
 time iterative_solver <path to file> example_alus/stateful_alus/tofino.alu example_alus/stateless_alus/stateless_alu_for_tofino.alu 1 1 "0,1,2,3,30" 10 --state-groups 1 --input-packet 1 --parallel-sketch
-time iterative_solver <path to file> example_alus/stateful_alus/tofino.alu example_alus/stateless_alus/stateless_alu_for_tofino.alu 1 1 "0,1,2,3,30" 10 --state-groups 2 --input-packet 0 --parallel-sketch
+time iterative_solver <path to file> example_alus/stateful_alus/tofino.alu example_alus/stateless_alus/stateless_alu_for_tofino.alu 1 1 "0,1,2,3,30" 10 --state-groups 2 --input-packet 1 --parallel-sketch
 8. sampling:
 time iterative_solver <path to file> example_alus/stateful_alus/tofino.alu example_alus/stateless_alus/stateless_alu_for_tofino.alu 1 1 "0,1,2,3,29" 10 --state-groups 0 --input-packet 0 --parallel-sketch
 9. snap heavy hitter:
