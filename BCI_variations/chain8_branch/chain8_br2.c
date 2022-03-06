@@ -23,6 +23,7 @@ void func(struct Packet p) {
       c3 = c3 + c2;
     } else {
       c3 = p.p1;
+    }
   }
     c4 = c4 + c3;
     c5 = c5 + c4;

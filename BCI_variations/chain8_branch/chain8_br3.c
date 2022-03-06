@@ -31,6 +31,7 @@ void func(struct Packet p) {
       } else {
         c3 = p.p1;
       }
+    }
   }
     c4 = c4 + c3;
     c5 = c5 + c4;
