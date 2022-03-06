@@ -14,7 +14,7 @@ int c7;
 int c8;
 
 void func(struct Packet p) {
-  c1 = p.p1 + p.p2 + p3;
+  c1 = p.p1 + p.p2 + p.p3;
   c2 = c2 + c1;
   c3 = c3 + c2;
   c4 = c4 + c3;
