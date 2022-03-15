@@ -1,0 +1,66 @@
+header packets_t {
+    bit<32> pkt_0;
+    bit<32> pkt_1;
+    bit<32> pkt_2;
+    bit<32> pkt_3;
+    bit<32> pkt_4;
+    bit<32> pkt_5;
+    bit<32> pkt_6;
+}
+struct headers {
+    packets_t  pkts;
+}
+
+control ingress(inout headers hdr,
+                  inout metadata meta,
+                  inout standard_metadata_t standard_metadata) {
+
+        action A1() {
+               hdr.pkts.pkt_0 = 5; // ALU1
+               hdr.pkts.pkt_1 = 5; // ALU2
+        }
+        table T1 {
+              actions = {
+                  A1;
+              }
+              key = {
+                  hdr.pkts.pkt_2 : exact;
+              }
+              size = 288;
+        }
+
+        action A1() {
+            @atomic {
+                bit<32> s0_tmp;
+                s0.read(s0_tmp, 0);
+                hdr.pkts.pkt_5 = hdr.pkts.pkt_3 + hdr.pkts.pkt_4;
+                if (hdr.pkts.pkt_3 == 102) {
+                    s0_tmp = 1;
+                } else { 
+                    if (hdr.pkts.pkt_4 == 102) {
+                        hdr.pkts.pkt_6 = (s0_tmp == 0);
+                    }
+                }
+                s0.write(0, s0_tmp);
+            }
+        }
+        table T2 {
+            actions = {
+                A1;
+            }
+            key = {
+                hdr.pkts.pkt_0 : exact;
+            }
+            size = 1;
+        }
+
+        apply {
+            T1.apply();
+            T2.apply();
+        }
+}
+
+'''
+Match dependency: ingress_port_mapping (T1) vs stateful_fw_T (T2)
+
+'''
