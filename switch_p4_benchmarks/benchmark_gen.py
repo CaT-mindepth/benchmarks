@@ -1,5 +1,7 @@
 import sys
 
+import random
+
 table_list = ["ingress_port_mapping", "ingress_port_properties", "validate_outer_ethernet", "validate_outer_ipv4_packet", "validate_outer_ipv6_packet",
         "validate_mpls_packet", "switch_config_params", "port_vlan_mapping", "spanning_tree", "ingress_qos_map_dscp", "ingress_qos_map_pcp",
         "ipsg", "ipsg_permit_special", "int_terminate", "int_sink_update_outer", "int_source", "sflow_ing_take_sample", "sflow_ingress",
@@ -2686,6 +2688,93 @@ system_acl_content = '''
     }'''
 table_def["system_acl"] = system_acl_content
 
+def pass_test(table_l):
+    #Note1: ingress_qos_map_pcp & ingress_qos_map_dscp are disjoint
+    if "ingress_qos_map_pcp" in table_l and "ingress_qos_map_dscp" in table_l:
+        return False
+    #Note2: int_terminate & int_source are disjoint
+    if "int_terminate" in table_l and "int_source" in table_l:
+        return False
+    #Note3: int_sink_update_outer & int_source are disjoint
+    if "int_sink_update_outer" in table_l and "int_source" in table_l:
+        return False
+    #Note4: outer_ipv4_multicast outer_ipv4_multicast_star_g, && outer_ipv6_multicast, outer_ipv6_multicast_star_g are disjoint
+    if "outer_ipv4_multicast" in table_l and "outer_ipv6_multicast" in table_l:
+        return False
+    if "outer_ipv4_multicast" in table_l and "outer_ipv6_multicast_star_g" in table_l:
+        return False
+    if "outer_ipv4_multicast_star_g" in table_l and "outer_ipv6_multicast" in table_l:
+        return False
+    if "outer_ipv4_multicast_star_g" in table_l and "outer_ipv6_multicast_star_g" in table_l:
+        return False
+    #Note5: ip_acl & ipv6_acl are disjoint
+    if "ip_acl" in table_l and "ipv6_acl" in table_l:
+        return False
+    #Note6: ipv4_urpf & ipv4_urpf_lpm are disjoint
+    if "ipv4_urpf" in table_l and "ipv4_urpf_lpm" in table_l:
+        return False
+    #Note7: ipv4_fib & ipv4_fib_lpm
+    if "ipv4_fib" in table_l and "ipv4_fib_lpm" in table_l:
+        return False
+    #Note8: ipv6_urpf & ipv6_urpf_lpm are disjoint
+    if "ipv6_urpf" in table_l and "ipv6_urpf_lpm" in table_l:
+        return False
+    #Note9: ipv6_fib & ipv6_fib_lpm are disjoint
+    if "ipv6_fib" in table_l and "ipv6_fib_lpm" in table_l:
+        return False
+    #Note10: ipv4_multicast_bridge & ipv4_multicast_bridge_star_g are disjoint
+    if "ipv4_multicast_bridge" in table_l and "ipv4_multicast_bridge_star_g" in table_l:
+        return False
+    #Note11: ipv4_multicast_route & ipv4_multicast_route_star_g are disjoint 
+    if "ipv4_multicast_route" in table_l and "ipv4_multicast_route_star_g" in table_l:
+        return False
+    #Note12: ipv6_multicast_bridge & ipv6_multicast_bridge_star_g are disjoint
+    if "ipv6_multicast_bridge" in table_l and "ipv6_multicast_bridge_star_g" in table_l:
+        return False
+    #Note13: ipv6_multicast_route & ipv6_multicast_route_star_g are disjoint 
+    if "ipv6_multicast_route" in table_l and "ipv6_multicast_route_star_g" in table_l:
+        return False
+    #Note14: nat_dst & nat_flow & nat_src & nat_twice are disjoint
+    if "nat_dst" in table_l and "nat_flow" in table_l:
+        return False
+    if "nat_dst" in table_l and "nat_src" in table_l:
+        return False
+    if "nat_dst" in table_l and "nat_twice" in table_l:
+        return False
+    if "nat_flow" in table_l and "nat_src" in table_l:
+        return False
+    if "nat_flow" in table_l and "nat_twice" in table_l:
+        return False
+    if "nat_src" in table_l and "nat_twice" in table_l:
+        return False
+    #Note15: compute_ipv4_hashes & compute_ipv6_hashes & compute_non_ip_hashes are disjoint
+    if "compute_ipv4_hashes" in table_l and "compute_ipv6_hashes" in table_l:
+        return False
+    if "compute_ipv4_hashes" in table_l and "compute_non_ip_hashes" in table_l:
+        return False
+    if "compute_ipv6_hashes" in table_l and "compute_non_ip_hashes" in table_l:
+        return False
+    #Note16: ecmp_group & nexthop are disjoint
+    if "ecmp_group" in table_l and "nexthop" in table_l:
+        return False
+    return True
+
+
+def gen_random_table(table_num, table_list):
+    num_of_table = len(table_list)
+    ret_l = []
+    while 1:
+        ret_l = random.sample(range(0, num_of_table), table_num)
+        ret_l.sort()
+        table_l = []
+        for v in ret_l:
+            table_l.append(table_list[v])
+        if pass_test(table_l):
+            break
+        else:
+            ret_l = []
+    return table_l
+    
 def main(argv):
     #Note1: ingress_qos_map_pcp & ingress_qos_map_dscp are disjoint
     #Note2: int_terminate & int_source are disjoint
@@ -2705,14 +2794,17 @@ def main(argv):
     #Note16: ecmp_group & nexthop are disjoint
     # print("len(table_list) =", len(table_list))
     # print("len(table_def) =", len(table_def))
+    '''
     list_t = ["ingress_port_mapping", "port_vlan_mapping", "ipsg", "native_packet_over_fabric", "mpls_0", "dmac", "ip_acl","ipv4_racl","fwd_result","ecmp_group","lag_group","fabric_lag"]
+    '''
+    table_num = 5
+    list_t = gen_random_table(table_num, table_list)
     out_str = ""
     for t in list_t:
         out_str += table_def[t]
-    '''
+    out_str += "\n"
     for t in list_t:
         out_str += "apply(" + t + ");\n"
-    '''
     print(out_str)
 if __name__ == "__main__":
     main(sys.argv)
