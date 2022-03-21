@@ -38,7 +38,10 @@ def main(argv):
                     line = line.replace(var, rename_dir[var])
         # Deal with the match part
         elif line.find(":") != -1:
-            pos = line.find(":")
+            if line.find("]") != -1:
+                pos = line.find(":", line.find("]"))
+            else:
+                pos = line.find(":")
             if line[pos - 1] != ' ':
                 line = line[:pos] + ' ' + line[pos:]
             l = line.split()
