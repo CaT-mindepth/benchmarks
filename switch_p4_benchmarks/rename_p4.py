@@ -53,7 +53,10 @@ def main(argv):
                     line = line.replace(var, rename_dir[var])
         elif line.find("table") != -1:
             l = line.split()
-            table_name = l[1]
+            for i in range(len(l)):
+                if l[i] == 'table':
+                    table_name = l[i + 1]
+                    break
             table_list.append(table_name)
         out_str += line
     #print(out_str)
