@@ -666,7 +666,7 @@ table_def["tunnel_lookup_miss_0"] = tunnel_lookup_miss_0_content
 
 fabric_ingress_dst_lkp_content = '''
     action terminate_cpu_packet() {
-        standard_metadata.egress_spec = (bit<9>)hdr.fabric_header.dstPortOrGroup;
+        standard_metadata.egress_spec = hdr.fabric_header.dstPortOrGroup;
         meta.egress_metadata.bypass = hdr.fabric_header_cpu.txBypass;
         meta.intrinsic_metadata.mcast_grp = hdr.fabric_header_cpu.mcast_grp;
         hdr.ethernet.etherType = hdr.fabric_payload_header.etherType;
@@ -677,7 +677,7 @@ fabric_ingress_dst_lkp_content = '''
         meta.fabric_metadata.dst_port = hdr.fabric_header.dstPortOrGroup;
     }
     action terminate_fabric_unicast_packet() {
-        standard_metadata.egress_spec = (bit<9>)hdr.fabric_header.dstPortOrGroup;
+        standard_metadata.egress_spec = hdr.fabric_header.dstPortOrGroup;
         meta.tunnel_metadata.tunnel_terminate = hdr.fabric_header_unicast.tunnelTerminate;
         meta.tunnel_metadata.ingress_tunnel_type = hdr.fabric_header_unicast.ingressTunnelType;
         meta.l3_metadata.nexthop_index = hdr.fabric_header_unicast.nexthopIndex;
@@ -1205,7 +1205,7 @@ smac_content = '''
 table_def["smac"] = smac_content
 
 mac_acl_content = '''
-    action acl_deny(bit<32> acl_stats_index, bit<32> acl_meter_index, bit<32> acl_copy_reason, bit<32> nat_mode, bit<32> ingress_cos, bit<32> tc, bit<32> color) {
+    action acl_deny_mac(bit<32> acl_stats_index, bit<32> acl_meter_index, bit<32> acl_copy_reason, bit<32> nat_mode, bit<32> ingress_cos, bit<32> tc, bit<32> color) {
         meta.acl_metadata.acl_deny = 1;
         meta.acl_metadata.acl_stats_index = acl_stats_index;
         meta.meter_metadata.meter_index = acl_meter_index;
@@ -1215,7 +1215,7 @@ mac_acl_content = '''
         meta.qos_metadata.lkp_tc = tc;
         meta.meter_metadata.packet_color = color;
     }
-    action acl_permit(bit<32> acl_stats_index, bit<32> acl_meter_index, bit<32> acl_copy_reason, bit<32> nat_mode, bit<32> ingress_cos, bit<32> tc, bit<32> color) {
+    action acl_permit_mac(bit<32> acl_stats_index, bit<32> acl_meter_index, bit<32> acl_copy_reason, bit<32> nat_mode, bit<32> ingress_cos, bit<32> tc, bit<32> color) {
         meta.acl_metadata.acl_stats_index = acl_stats_index;
         meta.meter_metadata.meter_index = acl_meter_index;
         meta.fabric_metadata.reason_code = acl_copy_reason;
@@ -1260,8 +1260,8 @@ mac_acl_content = '''
     table mac_acl {
         actions = {
             
-            acl_deny;
-            acl_permit;
+            acl_deny_mac;
+            acl_permit_mac;
             acl_redirect_nexthop;
             acl_redirect_ecmp;
             acl_mirror;
@@ -1765,14 +1765,14 @@ ipv4_multicast_bridge_content = '''
 table_def["ipv4_multicast_bridge"] = ipv4_multicast_bridge_content
 
 ipv4_multicast_bridge_star_g_content = '''
-    action multicast_bridge_star_g_hit(bit<32> mc_index) {
+    action multicast_bridge_star_g_hit_ipv4(bit<32> mc_index) {
         meta.multicast_metadata.multicast_bridge_mc_index = mc_index;
         meta.multicast_metadata.mcast_bridge_hit = 1;
     }
     table ipv4_multicast_bridge_star_g {
         actions = {
             
-            multicast_bridge_star_g_hit;
+            multicast_bridge_star_g_hit_ipv4;
         }
         key = {
             meta.ingress_metadata.bd      : exact;
@@ -1852,14 +1852,13 @@ ipv6_multicast_bridge_content = '''
 table_def["ipv6_multicast_bridge"] = ipv6_multicast_bridge_content
 
 ipv6_multicast_bridge_star_g_content = '''
-    action multicast_bridge_star_g_hit(bit<32> mc_index) {
+    action multicast_bridge_star_g_hit_ipv6(bit<32> mc_index) {
         meta.multicast_metadata.multicast_bridge_mc_index = mc_index;
         meta.multicast_metadata.mcast_bridge_hit = 1;
     }
     table ipv6_multicast_bridge_star_g {
         actions = {
-            
-            multicast_bridge_star_g_hit;
+            multicast_bridge_star_g_hit_ipv6;
         }
         key = {
             meta.ingress_metadata.bd      : exact;
@@ -2344,7 +2343,7 @@ bd_flood_content = '''
 table_def["bd_flood"] = bd_flood_content
 
 lag_group_content = '''
-    action set_lag_port(bit<9> port) {
+    action set_lag_port(bit<32> port) {
         standard_metadata.egress_spec = port;
     }
     action set_lag_remote_port(bit<32> device, bit<32> port) {
@@ -2383,7 +2382,7 @@ table_def["lag_group"] = lag_group_content
 # table_def["learn_notify"] = learn_notify_content
 
 fabric_lag_content = '''
-    action set_fabric_lag_port(bit<9> port) {
+    action set_fabric_lag_port(bit<32> port) {
         standard_metadata.egress_spec = port;
     }
     action set_fabric_multicast(bit<32> fabric_mgid) {
