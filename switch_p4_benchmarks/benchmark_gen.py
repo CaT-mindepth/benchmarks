@@ -349,7 +349,6 @@ ingress_qos_map_pcp_content = '''
         size = 64;
     }'''
 table_def["ingress_qos_map_pcp"] = ingress_qos_map_pcp_content
-
 # ipsg_content = '''
 #     action on_miss() {
 #     }
@@ -527,8 +526,6 @@ adjust_lkp_fields_content = '''
 table_def["adjust_lkp_fields"] = adjust_lkp_fields_content
 
 outer_rmac_content = '''
-    action on_miss() {
-    }
     action outer_rmac_hit() {
         meta.l3_metadata.rmac_hit = 1w1;
     }
@@ -800,8 +797,6 @@ ipv4_dest_vtep_content = '''
 table_def["ipv4_dest_vtep"] = ipv4_dest_vtep_content
 
 ipv4_src_vtep_content = '''
-    action on_miss() {
-    }
     action src_vtep_hit(bit<16> ifindex) {
         meta.ingress_metadata.ifindex = ifindex;
     }
@@ -843,8 +838,6 @@ ipv6_dest_vtep_content = '''
 table_def["ipv6_dest_vtep"] = ipv6_dest_vtep_content
 
 ipv6_src_vtep_content = '''
-    action on_miss() {
-    }
     action src_vtep_hit(bit<16> ifindex) {
         meta.ingress_metadata.ifindex = ifindex;
     }
@@ -924,8 +917,6 @@ mpls_0_content = '''
 table_def["mpls_0"] = mpls_0_content
 
 outer_ipv4_multicast_content = '''
-    action on_miss() {
-    }
     action outer_multicast_route_s_g_hit(bit<16> mc_index, bit<16> mcast_rpf_group) {
         meta.intrinsic_metadata.mcast_grp = mc_index;
         meta.multicast_metadata.outer_mcast_route_hit = 1w1;
@@ -991,8 +982,6 @@ outer_ipv4_multicast_star_g_content = '''
 table_def["outer_ipv4_multicast_star_g"] = outer_ipv4_multicast_star_g_content
 
 outer_ipv6_multicast_content = '''
-    action on_miss() {
-    }
     action outer_multicast_route_s_g_hit(bit<16> mc_index, bit<16> mcast_rpf_group) {
         meta.intrinsic_metadata.mcast_grp = mc_index;
         meta.multicast_metadata.outer_mcast_route_hit = 1w1;
@@ -1510,8 +1499,6 @@ ipv4_racl_content = '''
 table_def["ipv4_racl"] = ipv4_racl_content
 
 ipv4_urpf_content = '''
-    action on_miss() {
-    }
     action ipv4_urpf_hit(bit<16> urpf_bd_group) {
         meta.l3_metadata.urpf_hit = 1w1;
         meta.l3_metadata.urpf_bd_group = urpf_bd_group;
@@ -1553,8 +1540,6 @@ ipv4_urpf_lpm_content = '''
 table_def["ipv4_urpf_lpm"] = ipv4_urpf_lpm_content
 
 ipv4_fib_content = '''
-    action on_miss() {
-    }
     action fib_hit_nexthop(bit<16> nexthop_index) {
         meta.l3_metadata.fib_hit = 1w1;
         meta.l3_metadata.fib_nexthop = nexthop_index;
@@ -1580,8 +1565,6 @@ table_def["ipv4_fib"] = ipv4_fib_content
 
 
 ipv4_fib_lpm_content = '''
-    action on_miss() {
-    }
     action fib_hit_nexthop(bit<16> nexthop_index) {
         meta.l3_metadata.fib_hit = 1w1;
         meta.l3_metadata.fib_nexthop = nexthop_index;
@@ -1663,8 +1646,6 @@ ipv6_racl_content = '''
 table_def["ipv6_racl"] = ipv6_racl_content
 
 ipv6_urpf_content = '''
-    action on_miss() {
-    }
     action ipv6_urpf_hit(bit<16> urpf_bd_group) {
         meta.l3_metadata.urpf_hit = 1w1;
         meta.l3_metadata.urpf_bd_group = urpf_bd_group;
@@ -1706,8 +1687,6 @@ ipv6_urpf_lpm_content = '''
 table_def["ipv6_urpf_lpm"] = ipv6_urpf_lpm_content
 
 ipv6_fib_content = '''
-    action on_miss() {
-    }
     @name(".fib_hit_nexthop") action fib_hit_nexthop(bit<16> nexthop_index) {
         meta.l3_metadata.fib_hit = 1w1;
         meta.l3_metadata.fib_nexthop = nexthop_index;
@@ -1733,8 +1712,6 @@ ipv6_fib_content = '''
 table_def["ipv6_fib"] = ipv6_fib_content
 
 ipv6_fib_lpm_content = '''
-    action on_miss() {
-    }
     action fib_hit_nexthop(bit<16> nexthop_index) {
         meta.l3_metadata.fib_hit = 1w1;
         meta.l3_metadata.fib_nexthop = nexthop_index;
@@ -1777,8 +1754,6 @@ urpf_bd_content = '''
 table_def["urpf_bd"] = urpf_bd_content
 
 ipv4_multicast_bridge_content = '''
-    action on_miss() {
-    }
     action multicast_bridge_s_g_hit(bit<16> mc_index) {
         meta.multicast_metadata.multicast_bridge_mc_index = mc_index;
         meta.multicast_metadata.mcast_bridge_hit = 1w1;
@@ -1876,8 +1851,6 @@ ipv4_multicast_route_star_g_content = '''
 table_def["ipv4_multicast_route_star_g"] = ipv4_multicast_route_star_g_content
 
 ipv6_multicast_bridge_content = '''
-    action on_miss() {
-    }
     action multicast_bridge_s_g_hit(bit<16> mc_index) {
         meta.multicast_metadata.multicast_bridge_mc_index = mc_index;
         meta.multicast_metadata.mcast_bridge_hit = 1w1;
@@ -1975,8 +1948,6 @@ ipv6_multicast_route_star_g_content = '''
 table_def["ipv6_multicast_route_star_g"] = ipv6_multicast_route_star_g_content
 
 nat_dst_content = '''
-    action on_miss() {
-    }
     action set_dst_nat_nexthop_index(bit<16> nexthop_index, bit<2> nexthop_type, bit<14> nat_rewrite_index) {
         meta.nat_metadata.nat_nexthop = nexthop_index;
         meta.nat_metadata.nat_nexthop_type = nexthop_type;
@@ -2034,8 +2005,6 @@ nat_flow_content = '''
 table_def["nat_flow"] = nat_flow_content
 
 nat_src_content = '''
-    action on_miss() {
-    }
     action set_src_nat_rewrite_index(bit<14> nat_rewrite_index) {
         meta.nat_metadata.nat_rewrite_index = nat_rewrite_index;
     }
@@ -2055,8 +2024,6 @@ nat_src_content = '''
 table_def["nat_src"] = nat_src_content
 
 nat_twice_content = '''
-    action on_miss() {
-    }
     action set_twice_nat_nexthop_index(bit<16> nexthop_index, bit<2> nexthop_type, bit<14> nat_rewrite_index) {
         meta.nat_metadata.nat_nexthop = nexthop_index;
         meta.nat_metadata.nat_nexthop_type = nexthop_type;
