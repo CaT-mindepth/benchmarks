@@ -132,10 +132,8 @@ validate_outer_ethernet_content = '''
             set_valid_outer_broadcast_packet_qinq_tagged;
         }
         key = {
-            hdr.ethernet.srcAddr      : ternary;
-            hdr.ethernet.dstAddr      : ternary;
-            hdr.vlan_tag_[0].isValid(): exact;
-            hdr.vlan_tag_[1].isValid(): exact;
+            hdr.ethernet.srcAddr      : exact;
+            hdr.ethernet.dstAddr      : exact;
         }
         size = 512;
     }'''
@@ -157,9 +155,9 @@ validate_outer_ipv4_packet_content = '''
             set_malformed_outer_ipv4_packet;
         }
         key = {
-            hdr.ipv4.version       : ternary;
-            hdr.ipv4.ttl           : ternary;
-            hdr.ipv4.srcAddr[31:24]: ternary;
+            hdr.ipv4.version       : exact;
+            hdr.ipv4.ttl           : exact;
+            hdr.ipv4.srcAddr[31:24]: exact;
         }
         size = 512;
     }'''
@@ -182,9 +180,9 @@ validate_outer_ipv6_packet_content = '''
             set_malformed_outer_ipv6_packet;
         }
         key = {
-            hdr.ipv6.version         : ternary;
-            hdr.ipv6.hopLimit        : ternary;
-            hdr.ipv6.srcAddr[127:112]: ternary;
+            hdr.ipv6.version         : exact;
+            hdr.ipv6.hopLimit        : exact;
+            hdr.ipv6.srcAddr[127:112]: exact;
         }
         size = 512;
     }'''
@@ -210,15 +208,12 @@ validate_mpls_packet_content = '''
             set_valid_mpls_label3;
         }
         key = {
-            hdr.mpls[0].label    : ternary;
-            hdr.mpls[0].bos      : ternary;
-            hdr.mpls[0].isValid(): exact;
-            hdr.mpls[1].label    : ternary;
-            hdr.mpls[1].bos      : ternary;
-            hdr.mpls[1].isValid(): exact;
-            hdr.mpls[2].label    : ternary;
-            hdr.mpls[2].bos      : ternary;
-            hdr.mpls[2].isValid(): exact;
+            hdr.mpls[0].label    : exact;
+            hdr.mpls[0].bos      : exact;
+            hdr.mpls[1].label    : exact;
+            hdr.mpls[1].bos      : exact;
+            hdr.mpls[2].label    : exact;
+            hdr.mpls[2].bos      : exact;
         }
         size = 512;
     }'''
@@ -279,9 +274,7 @@ port_vlan_mapping_content = '''
         }
         key = {
             meta.ingress_metadata.ifindex: exact;
-            hdr.vlan_tag_[0].isValid()   : exact;
             hdr.vlan_tag_[0].vid         : exact;
-            hdr.vlan_tag_[1].isValid()   : exact;
             hdr.vlan_tag_[1].vid         : exact;
         }
         size = 4096;
@@ -324,8 +317,8 @@ ingress_qos_map_dscp_content = '''
             set_ingress_tc_and_color;
         }
         key = {
-            meta.qos_metadata.ingress_qos_group: ternary;
-            meta.l3_metadata.lkp_dscp          : ternary;
+            meta.qos_metadata.ingress_qos_group: exact;
+            meta.l3_metadata.lkp_dscp          : exact;
         }
         size = 64;
     }'''
@@ -350,8 +343,8 @@ ingress_qos_map_pcp_content = '''
             set_ingress_tc_and_color;
         }
         key = {
-            meta.qos_metadata.ingress_qos_group: ternary;
-            meta.l2_metadata.lkp_pcp           : ternary;
+            meta.qos_metadata.ingress_qos_group: exact;
+            meta.l2_metadata.lkp_pcp           : exact;
         }
         size = 64;
     }'''
@@ -383,9 +376,9 @@ ipsg_permit_special_content = '''
             ipsg_miss;
         }
         key = {
-            meta.l3_metadata.lkp_ip_proto : ternary;
-            meta.l3_metadata.lkp_l4_dport : ternary;
-            meta.ipv4_metadata.lkp_ipv4_da: ternary;
+            meta.l3_metadata.lkp_ip_proto : exact;
+            meta.l3_metadata.lkp_l4_dport : exact;
+            meta.ipv4_metadata.lkp_ipv4_da: exact;
         }
         size = 512;
     }'''
@@ -394,7 +387,6 @@ table_def["ipsg_permit_special"] = ipsg_permit_special_content
 int_sink_update_outer_content = '''
     action int_sink_update_vxlan_gpe_v4() {
         hdr.vxlan_gpe.next_proto = hdr.vxlan_gpe_int_header.next_proto;
-        hdr.vxlan_gpe_int_header.setInvalid();
         hdr.ipv4.totalLen = hdr.ipv4.totalLen - meta.int_metadata.insert_byte_cnt;
         hdr.udp.length_ = hdr.udp.length_ - meta.int_metadata.insert_byte_cnt;
     }
@@ -404,8 +396,6 @@ int_sink_update_outer_content = '''
             
         }
         key = {
-            hdr.vxlan_gpe_int_header.isValid(): exact;
-            hdr.ipv4.isValid()                : exact;
             meta.int_metadata_i2e.sink        : exact;
         }
         size = 2;
@@ -426,13 +416,10 @@ int_source_content = '''
             int_set_no_src;
         }
         key = {
-            hdr.int_header.isValid()      : exact;
-            hdr.ipv4.isValid()            : exact;
-            meta.ipv4_metadata.lkp_ipv4_da: ternary;
-            meta.ipv4_metadata.lkp_ipv4_sa: ternary;
-            hdr.inner_ipv4.isValid()      : exact;
-            hdr.inner_ipv4.dstAddr        : ternary;
-            hdr.inner_ipv4.srcAddr        : ternary;
+            meta.ipv4_metadata.lkp_ipv4_da: exact;
+            meta.ipv4_metadata.lkp_ipv4_sa: exact;
+            hdr.inner_ipv4.dstAddr        : exact;
+            hdr.inner_ipv4.srcAddr        : exact;
         }
         size = 256;
     }
@@ -457,12 +444,8 @@ int_terminate_content = '''
             int_no_sink;
         }
         key = {
-            hdr.int_header.isValid()          : exact;
-            hdr.vxlan_gpe_int_header.isValid(): exact;
-            hdr.ipv4.isValid()                : exact;
-            meta.ipv4_metadata.lkp_ipv4_da    : ternary;
-            hdr.inner_ipv4.isValid()          : exact;
-            hdr.inner_ipv4.dstAddr            : ternary;
+            meta.ipv4_metadata.lkp_ipv4_da    : exact;
+            hdr.inner_ipv4.dstAddr            : exact;
         }
         size = 256;
     }
@@ -479,7 +462,7 @@ sflow_ing_take_sample_content = '''
             sflow_ing_pkt_to_cpu;
         }
         key = {
-            meta.ingress_metadata.sflow_take_sample: ternary;
+            meta.ingress_metadata.sflow_take_sample: exact;
             meta.sflow_metadata.sflow_session_id   : exact;
         }
         size = 16;
@@ -496,10 +479,9 @@ sflow_ingress_content = '''
             sflow_ing_session_enable_0;
         }
         key = {
-            meta.ingress_metadata.ifindex : ternary;
-            meta.ipv4_metadata.lkp_ipv4_sa: ternary;
-            meta.ipv4_metadata.lkp_ipv4_da: ternary;
-            hdr.sflow.isValid()           : exact;
+            meta.ingress_metadata.ifindex : exact;
+            meta.ipv4_metadata.lkp_ipv4_sa: exact;
+            meta.ipv4_metadata.lkp_ipv4_da: exact;
         }
         size = 512;
     }'''
@@ -646,8 +628,6 @@ tunnel_content = '''
         key = {
             meta.tunnel_metadata.tunnel_vni         : exact;
             meta.tunnel_metadata.ingress_tunnel_type: exact;
-            hdr.inner_ipv4.isValid()                : exact;
-            hdr.inner_ipv6.isValid()                : exact;
         }
         size = 1024;
     }'''
@@ -699,9 +679,6 @@ fabric_ingress_dst_lkp_content = '''
         meta.egress_metadata.bypass = hdr.fabric_header_cpu.txBypass;
         meta.intrinsic_metadata.mcast_grp = hdr.fabric_header_cpu.mcast_grp;
         hdr.ethernet.etherType = hdr.fabric_payload_header.etherType;
-        hdr.fabric_header.setInvalid();
-        hdr.fabric_header_cpu.setInvalid();
-        hdr.fabric_payload_header.setInvalid();
     }
     action switch_fabric_unicast_packet() {
         meta.fabric_metadata.fabric_header_present = 1w1;
@@ -716,9 +693,6 @@ fabric_ingress_dst_lkp_content = '''
         meta.l3_metadata.routed = hdr.fabric_header_unicast.routed;
         meta.l3_metadata.outer_routed = hdr.fabric_header_unicast.outerRouted;
         hdr.ethernet.etherType = hdr.fabric_payload_header.etherType;
-        hdr.fabric_header.setInvalid();
-        hdr.fabric_header_unicast.setInvalid();
-        hdr.fabric_payload_header.setInvalid();
     }
     action switch_fabric_multicast_packet() {
         meta.fabric_metadata.fabric_header_present = 1w1;
@@ -732,9 +706,6 @@ fabric_ingress_dst_lkp_content = '''
         meta.l3_metadata.outer_routed = hdr.fabric_header_multicast.outerRouted;
         meta.intrinsic_metadata.mcast_grp = hdr.fabric_header_multicast.mcastGrp;
         hdr.ethernet.etherType = hdr.fabric_payload_header.etherType;
-        hdr.fabric_header.setInvalid();
-        hdr.fabric_header_multicast.setInvalid();
-        hdr.fabric_payload_header.setInvalid();
     }
     table fabric_ingress_dst_lkp {
         actions = {
@@ -947,8 +918,6 @@ mpls_0_content = '''
         }
         key = {
             meta.tunnel_metadata.mpls_label: exact;
-            hdr.inner_ipv4.isValid()       : exact;
-            hdr.inner_ipv6.isValid()       : exact;
         }
         size = 1024;
     }'''
@@ -1015,7 +984,7 @@ outer_ipv4_multicast_star_g_content = '''
         key = {
             meta.multicast_metadata.ipv4_mcast_key_type: exact;
             meta.multicast_metadata.ipv4_mcast_key     : exact;
-            hdr.ipv4.dstAddr                           : ternary;
+            hdr.ipv4.dstAddr                           : exact;
         }
         size = 512;
     }'''
@@ -1082,7 +1051,7 @@ outer_ipv6_multicast_star_g_content = '''
         key = {
             meta.multicast_metadata.ipv6_mcast_key_type: exact;
             meta.multicast_metadata.ipv6_mcast_key     : exact;
-            hdr.ipv6.dstAddr                           : ternary;
+            hdr.ipv6.dstAddr                           : exact;
         }
         size = 512;
     }'''
@@ -1101,7 +1070,7 @@ storm_control_content = '''
         }
         key = {
             standard_metadata.ingress_port: exact;
-            meta.l2_metadata.lkp_pkt_type : ternary;
+            meta.l2_metadata.lkp_pkt_type : exact;
         }
         size = 512;
     }'''
@@ -1143,13 +1112,13 @@ validate_packet_content = '''
             set_malformed_packet;
         }
         key = {
-            meta.l2_metadata.lkp_mac_sa            : ternary;
-            meta.l2_metadata.lkp_mac_da            : ternary;
-            meta.l3_metadata.lkp_ip_type           : ternary;
-            meta.l3_metadata.lkp_ip_ttl            : ternary;
-            meta.l3_metadata.lkp_ip_version        : ternary;
-            meta.ipv4_metadata.lkp_ipv4_sa[31:24]  : ternary;
-            meta.ipv6_metadata.lkp_ipv6_sa[127:112]: ternary;
+            meta.l2_metadata.lkp_mac_sa            : exact;
+            meta.l2_metadata.lkp_mac_da            : exact;
+            meta.l3_metadata.lkp_ip_type           : exact;
+            meta.l3_metadata.lkp_ip_ttl            : exact;
+            meta.l3_metadata.lkp_ip_version        : exact;
+            meta.ipv4_metadata.lkp_ipv4_sa[31:24]  : exact;
+            meta.ipv6_metadata.lkp_ipv6_sa[127:112]: exact;
         }
         size = 512;
     }'''
@@ -1299,7 +1268,6 @@ mac_acl_content = '''
     }
     action acl_mirror(bit<32> session_id, bit<14> acl_stats_index, bit<16> acl_meter_index, bit<2> nat_mode, bit<3> ingress_cos, bit<8> tc, bit<2> color) {
         meta.i2e_metadata.mirror_session_id = (bit<16>)session_id;
-        clone3(CloneType.I2E, (bit<32>)session_id, { meta.i2e_metadata.ingress_tstamp, meta.i2e_metadata.mirror_session_id });
         meta.acl_metadata.acl_stats_index = acl_stats_index;
         meta.meter_metadata.meter_index = acl_meter_index;
         meta.nat_metadata.ingress_nat_mode = nat_mode;
@@ -1317,11 +1285,11 @@ mac_acl_content = '''
             acl_mirror;
         }
         key = {
-            meta.acl_metadata.if_label   : ternary;
-            meta.acl_metadata.bd_label   : ternary;
-            meta.l2_metadata.lkp_mac_sa  : ternary;
-            meta.l2_metadata.lkp_mac_da  : ternary;
-            meta.l2_metadata.lkp_mac_type: ternary;
+            meta.acl_metadata.if_label   : exact;
+            meta.acl_metadata.bd_label   : exact;
+            meta.l2_metadata.lkp_mac_sa  : exact;
+            meta.l2_metadata.lkp_mac_da  : exact;
+            meta.l2_metadata.lkp_mac_type: exact;
         }
         size = 512;
     }'''
@@ -1391,15 +1359,15 @@ ip_acl_content = '''
             acl_mirror;
         }
         key = {
-            meta.acl_metadata.if_label                 : ternary;
-            meta.acl_metadata.bd_label                 : ternary;
-            meta.ipv4_metadata.lkp_ipv4_sa             : ternary;
-            meta.ipv4_metadata.lkp_ipv4_da             : ternary;
-            meta.l3_metadata.lkp_ip_proto              : ternary;
+            meta.acl_metadata.if_label                 : exact;
+            meta.acl_metadata.bd_label                 : exact;
+            meta.ipv4_metadata.lkp_ipv4_sa             : exact;
+            meta.ipv4_metadata.lkp_ipv4_da             : exact;
+            meta.l3_metadata.lkp_ip_proto              : exact;
             meta.acl_metadata.ingress_src_port_range_id: exact;
             meta.acl_metadata.ingress_dst_port_range_id: exact;
-            hdr.tcp.flags                              : ternary;
-            meta.l3_metadata.lkp_ip_ttl                : ternary;
+            hdr.tcp.flags                              : exact;
+            meta.l3_metadata.lkp_ip_ttl                : exact;
         }
         size = 512;
     }'''
@@ -1470,15 +1438,15 @@ ipv6_acl_content = '''
             acl_mirror;
         }
         key = {
-            meta.acl_metadata.if_label                 : ternary;
-            meta.acl_metadata.bd_label                 : ternary;
-            meta.ipv4_metadata.lkp_ipv4_sa             : ternary;
-            meta.ipv4_metadata.lkp_ipv4_da             : ternary;
-            meta.l3_metadata.lkp_ip_proto              : ternary;
+            meta.acl_metadata.if_label                 : exact;
+            meta.acl_metadata.bd_label                 : exact;
+            meta.ipv4_metadata.lkp_ipv4_sa             : exact;
+            meta.ipv4_metadata.lkp_ipv4_da             : exact;
+            meta.l3_metadata.lkp_ip_proto              : exact;
             meta.acl_metadata.ingress_src_port_range_id: exact;
             meta.acl_metadata.ingress_dst_port_range_id: exact;
-            hdr.tcp.flags                              : ternary;
-            meta.l3_metadata.lkp_ip_ttl                : ternary;
+            hdr.tcp.flags                              : exact;
+            meta.l3_metadata.lkp_ip_ttl                : exact;
         }
         size = 512;
     }'''
@@ -1530,10 +1498,10 @@ ipv4_racl_content = '''
             racl_redirect_ecmp;
         }
         key = {
-            meta.acl_metadata.bd_label                 : ternary;
-            meta.ipv4_metadata.lkp_ipv4_sa             : ternary;
-            meta.ipv4_metadata.lkp_ipv4_da             : ternary;
-            meta.l3_metadata.lkp_ip_proto              : ternary;
+            meta.acl_metadata.bd_label                 : exact;
+            meta.ipv4_metadata.lkp_ipv4_sa             : exact;
+            meta.ipv4_metadata.lkp_ipv4_da             : exact;
+            meta.l3_metadata.lkp_ip_proto              : exact;
             meta.acl_metadata.ingress_src_port_range_id: exact;
             meta.acl_metadata.ingress_dst_port_range_id: exact;
         }
@@ -1683,10 +1651,10 @@ ipv6_racl_content = '''
             racl_redirect_ecmp;
         }
         key = {
-            meta.acl_metadata.bd_label                 : ternary;
-            meta.ipv6_metadata.lkp_ipv6_sa             : ternary;
-            meta.ipv6_metadata.lkp_ipv6_da             : ternary;
-            meta.l3_metadata.lkp_ip_proto              : ternary;
+            meta.acl_metadata.bd_label                 : exact;
+            meta.ipv6_metadata.lkp_ipv6_sa             : exact;
+            meta.ipv6_metadata.lkp_ipv6_da             : exact;
+            meta.l3_metadata.lkp_ip_proto              : exact;
             meta.acl_metadata.ingress_src_port_range_id: exact;
             meta.acl_metadata.ingress_dst_port_range_id: exact;
         }
@@ -2054,12 +2022,12 @@ nat_flow_content = '''
             set_twice_nat_nexthop_index;
         }
         key = {
-            meta.l3_metadata.vrf          : ternary;
-            meta.ipv4_metadata.lkp_ipv4_sa: ternary;
-            meta.ipv4_metadata.lkp_ipv4_da: ternary;
-            meta.l3_metadata.lkp_ip_proto : ternary;
-            meta.l3_metadata.lkp_l4_sport : ternary;
-            meta.l3_metadata.lkp_l4_dport : ternary;
+            meta.l3_metadata.vrf          : exact;
+            meta.ipv4_metadata.lkp_ipv4_sa: exact;
+            meta.ipv4_metadata.lkp_ipv4_da: exact;
+            meta.l3_metadata.lkp_ip_proto : exact;
+            meta.l3_metadata.lkp_l4_sport : exact;
+            meta.l3_metadata.lkp_l4_dport : exact;
         }
         size = 512;
     }'''
@@ -2346,20 +2314,20 @@ fwd_result_content = '''
             set_multicast_drop;
         }
         key = {
-            meta.l2_metadata.l2_redirect                 : ternary;
-            meta.acl_metadata.acl_redirect               : ternary;
-            meta.acl_metadata.racl_redirect              : ternary;
-            meta.l3_metadata.rmac_hit                    : ternary;
-            meta.l3_metadata.fib_hit                     : ternary;
-            meta.nat_metadata.nat_hit                    : ternary;
-            meta.l2_metadata.lkp_pkt_type                : ternary;
-            meta.l3_metadata.lkp_ip_type                 : ternary;
-            meta.multicast_metadata.igmp_snooping_enabled: ternary;
-            meta.multicast_metadata.mld_snooping_enabled : ternary;
-            meta.multicast_metadata.mcast_route_hit      : ternary;
-            meta.multicast_metadata.mcast_bridge_hit     : ternary;
-            meta.multicast_metadata.mcast_rpf_group      : ternary;
-            meta.multicast_metadata.mcast_mode           : ternary;
+            meta.l2_metadata.l2_redirect                 : exact;
+            meta.acl_metadata.acl_redirect               : exact;
+            meta.acl_metadata.racl_redirect              : exact;
+            meta.l3_metadata.rmac_hit                    : exact;
+            meta.l3_metadata.fib_hit                     : exact;
+            meta.nat_metadata.nat_hit                    : exact;
+            meta.l2_metadata.lkp_pkt_type                : exact;
+            meta.l3_metadata.lkp_ip_type                 : exact;
+            meta.multicast_metadata.igmp_snooping_enabled: exact;
+            meta.multicast_metadata.mld_snooping_enabled : exact;
+            meta.multicast_metadata.mcast_route_hit      : exact;
+            meta.multicast_metadata.mcast_bridge_hit     : exact;
+            meta.multicast_metadata.mcast_rpf_group      : exact;
+            meta.multicast_metadata.mcast_mode           : exact;
         }
         size = 512;
     }'''
@@ -2472,9 +2440,9 @@ learn_notify_content = '''
             generate_learn_notify;
         }
         key = {
-            meta.l2_metadata.l2_src_miss: ternary;
-            meta.l2_metadata.l2_src_move: ternary;
-            meta.l2_metadata.stp_state  : ternary;
+            meta.l2_metadata.l2_src_miss: exact;
+            meta.l2_metadata.l2_src_move: exact;
+            meta.l2_metadata.stp_state  : exact;
         }
         size = 512;
     }'''
@@ -2520,8 +2488,8 @@ traffic_class_content = '''
             set_icos_and_queue;
         }
         key = {
-            meta.qos_metadata.tc_qos_group: ternary;
-            meta.qos_metadata.lkp_tc      : ternary;
+            meta.qos_metadata.tc_qos_group: exact;
+            meta.qos_metadata.lkp_tc      : exact;
         }
         size = 512;
     }'''
@@ -2583,30 +2551,30 @@ system_acl_content = '''
             negative_mirror;
         }
         key = {
-            meta.acl_metadata.if_label               : ternary;
-            meta.acl_metadata.bd_label               : ternary;
-            meta.ingress_metadata.ifindex            : ternary;
-            meta.l2_metadata.lkp_mac_type            : ternary;
-            meta.l2_metadata.port_vlan_mapping_miss  : ternary;
-            meta.security_metadata.ipsg_check_fail   : ternary;
-            meta.acl_metadata.acl_deny               : ternary;
-            meta.acl_metadata.racl_deny              : ternary;
-            meta.l3_metadata.urpf_check_fail         : ternary;
-            meta.ingress_metadata.drop_flag          : ternary;
-            meta.l3_metadata.l3_copy                 : ternary;
-            meta.l3_metadata.rmac_hit                : ternary;
-            meta.l3_metadata.routed                  : ternary;
-            meta.ipv6_metadata.ipv6_src_is_link_local: ternary;
-            meta.l2_metadata.same_if_check           : ternary;
-            meta.tunnel_metadata.tunnel_if_check     : ternary;
-            meta.l3_metadata.same_bd_check           : ternary;
-            meta.l3_metadata.lkp_ip_ttl              : ternary;
-            meta.l2_metadata.stp_state               : ternary;
-            meta.ingress_metadata.control_frame      : ternary;
-            meta.ipv4_metadata.ipv4_unicast_enabled  : ternary;
-            meta.ipv6_metadata.ipv6_unicast_enabled  : ternary;
-            meta.ingress_metadata.egress_ifindex     : ternary;
-            meta.fabric_metadata.reason_code         : ternary;
+            meta.acl_metadata.if_label               : exact;
+            meta.acl_metadata.bd_label               : exact;
+            meta.ingress_metadata.ifindex            : exact;
+            meta.l2_metadata.lkp_mac_type            : exact;
+            meta.l2_metadata.port_vlan_mapping_miss  : exact;
+            meta.security_metadata.ipsg_check_fail   : exact;
+            meta.acl_metadata.acl_deny               : exact;
+            meta.acl_metadata.racl_deny              : exact;
+            meta.l3_metadata.urpf_check_fail         : exact;
+            meta.ingress_metadata.drop_flag          : exact;
+            meta.l3_metadata.l3_copy                 : exact;
+            meta.l3_metadata.rmac_hit                : exact;
+            meta.l3_metadata.routed                  : exact;
+            meta.ipv6_metadata.ipv6_src_is_link_local: exact;
+            meta.l2_metadata.same_if_check           : exact;
+            meta.tunnel_metadata.tunnel_if_check     : exact;
+            meta.l3_metadata.same_bd_check           : exact;
+            meta.l3_metadata.lkp_ip_ttl              : exact;
+            meta.l2_metadata.stp_state               : exact;
+            meta.ingress_metadata.control_frame      : exact;
+            meta.ipv4_metadata.ipv4_unicast_enabled  : exact;
+            meta.ipv6_metadata.ipv6_unicast_enabled  : exact;
+            meta.ingress_metadata.egress_ifindex     : exact;
+            meta.fabric_metadata.reason_code         : exact;
         }
         size = 512;
     }'''
