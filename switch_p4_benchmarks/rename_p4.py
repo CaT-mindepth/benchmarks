@@ -31,6 +31,8 @@ def main(argv):
             for var in l:
                 if var.find(".") != -1:
                     if var not in rename_dir:
+                        if var[-1] == ";":
+                            var = var[:-1]
                         rename_dir[var] = "hdr.pkts.pkt_" + str(cnt)
                         cnt = cnt + 1
                     line = line.replace(var, rename_dir[var])
@@ -51,7 +53,7 @@ def main(argv):
             table_name = l[1]
             table_list.append(table_name)
         out_str += line
-    print(out_str)
+    #print(out_str)
     out_prog = '''#include <core.p4>
 #include <v1model.p4>
 header packets_t {
