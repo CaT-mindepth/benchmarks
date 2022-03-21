@@ -11,8 +11,7 @@ table_list = ["ingress_port_mapping", "ingress_port_properties", "validate_outer
         "ip_acl", "ip_acl", "ipv4_racl", "ipv4_urpf", "ipv4_urpf_lpm", "ipv4_fib", "ipv4_fib_lpm", "ipv6_racl", "ipv6_urpf", "ipv6_urpf_lpm", "ipv6_fib",
         "ipv6_fib_lpm", "urpf_bd", "ipv4_multicast_bridge", "ipv4_multicast_bridge_star_g", "ipv4_multicast_route", "ipv4_multicast_route_star_g",
         "ipv6_multicast_bridge", "ipv6_multicast_bridge_star_g", "ipv6_multicast_route", "ipv6_multicast_route_star_g", "nat_dst", "nat_flow",
-        "nat_src", "nat_twice", "meter_index_0",
-        "meter_action", "ingress_bd_stats_0", "acl_stats_0", "fwd_result", "ecmp_group", "nexthop", "bd_flood", "lag_group", "learn_notify", "fabric_lag", "traffic_class",
+        "nat_src", "nat_twice", "meter_index_0", "ingress_bd_stats_0", "acl_stats_0", "fwd_result", "ecmp_group", "nexthop", "bd_flood", "lag_group", "learn_notify", "fabric_lag", "traffic_class",
         "drop_stats_0", "system_acl", "storm_control_stats_0"]
 table_def = {}
 
@@ -1330,7 +1329,6 @@ ip_acl_content = '''
     }
     action acl_mirror(bit<32> session_id, bit<14> acl_stats_index, bit<16> acl_meter_index, bit<2> nat_mode, bit<3> ingress_cos, bit<8> tc, bit<2> color) {
         meta.i2e_metadata.mirror_session_id = (bit<16>)session_id;
-        clone3(CloneType.I2E, (bit<32>)session_id, { meta.i2e_metadata.ingress_tstamp, meta.i2e_metadata.mirror_session_id });
         meta.acl_metadata.acl_stats_index = acl_stats_index;
         meta.meter_metadata.meter_index = acl_meter_index;
         meta.nat_metadata.ingress_nat_mode = nat_mode;
@@ -1408,7 +1406,6 @@ ipv6_acl_content = '''
     }
     action acl_mirror(bit<32> session_id, bit<14> acl_stats_index, bit<16> acl_meter_index, bit<2> nat_mode, bit<3> ingress_cos, bit<8> tc, bit<2> color) {
         meta.i2e_metadata.mirror_session_id = (bit<16>)session_id;
-        clone3(CloneType.I2E, (bit<32>)session_id, { meta.i2e_metadata.ingress_tstamp, meta.i2e_metadata.mirror_session_id });
         meta.acl_metadata.acl_stats_index = acl_stats_index;
         meta.meter_metadata.meter_index = acl_meter_index;
         meta.nat_metadata.ingress_nat_mode = nat_mode;
@@ -2129,33 +2126,33 @@ table_def["meter_index_0"] = meter_index_0_content
 #     }'''
 # table_def["compute_other_hashes"] = compute_other_hashes_content
 
-meter_action_content = '''
-    direct_counter(CounterType.packets) meter_stats;
-    action meter_permit() {
-    }
-    action meter_deny() {
-        mark_to_drop();
-    }
-    action meter_permit_0() {
-        meter_stats.count();
-    }
-    action meter_deny_0() {
-        meter_stats.count();
-        mark_to_drop();
-    }
-    @name(".meter_action") table meter_action {
-        actions = {
-            meter_permit_0;
-            meter_deny_0;
-        }
-        key = {
-            meta.meter_metadata.packet_color: exact;
-            meta.meter_metadata.meter_index : exact;
-        }
-        size = 1024;
-        @name(".meter_stats") counters = direct_counter(CounterType.packets);
-    }'''
-table_def["meter_action"] = meter_action_content
+# meter_action_content = '''
+#     direct_counter(CounterType.packets) meter_stats;
+#     action meter_permit() {
+#     }
+#     action meter_deny() {
+#         mark_to_drop();
+#     }
+#     action meter_permit_0() {
+#         meter_stats.count();
+#     }
+#     action meter_deny_0() {
+#         meter_stats.count();
+#         mark_to_drop();
+#     }
+#     @name(".meter_action") table meter_action {
+#         actions = {
+#             meter_permit_0;
+#             meter_deny_0;
+#         }
+#         key = {
+#             meta.meter_metadata.packet_color: exact;
+#             meta.meter_metadata.meter_index : exact;
+#         }
+#         size = 1024;
+#         @name(".meter_stats") counters = direct_counter(CounterType.packets);
+#     }'''
+# table_def["meter_action"] = meter_action_content
 
 ingress_bd_stats_0_content = '''
     @min_width(32) counter(32w1024, CounterType.packets_and_bytes) ingress_bd_stats;
@@ -2322,7 +2319,7 @@ ecmp_group_content = '''
         }
         key = {
             meta.l3_metadata.nexthop_index: exact;
-            meta.hash_metadata.hash1      : selector;
+            meta.hash_metadata.hash1      : exact;
         }
         size = 1024;
         @name(".ecmp_action_profile") @mode("fair") implementation = action_selector(HashAlgorithm.identity, 32w1024, 32w10);
@@ -2373,8 +2370,6 @@ bd_flood_content = '''
 table_def["bd_flood"] = bd_flood_content
 
 lag_group_content = '''
-    action set_lag_miss() {
-    }
     action set_lag_port(bit<9> port) {
         standard_metadata.egress_spec = port;
     }
@@ -2384,13 +2379,12 @@ lag_group_content = '''
     }
     table lag_group {
         actions = {
-            set_lag_miss;
             set_lag_port;
             set_lag_remote_port;
         }
         key = {
             meta.ingress_metadata.egress_ifindex: exact;
-            meta.hash_metadata.hash2            : selector;
+            meta.hash_metadata.hash2            : exact;
         }
         size = 1024;
         @name(".lag_action_profile") @mode("fair") implementation = action_selector(HashAlgorithm.identity, 32w1024, 32w8);
@@ -2430,7 +2424,7 @@ fabric_lag_content = '''
         }
         key = {
             meta.fabric_metadata.dst_device: exact;
-            meta.hash_metadata.hash2       : selector;
+            meta.hash_metadata.hash2       : exact;
         }
         @name(".fabric_lag_action_profile") @mode("fair") implementation = action_selector(HashAlgorithm.identity, 32w1024, 32w8);
     }'''
@@ -2479,33 +2473,15 @@ system_acl_content = '''
     action copy_to_cpu(bit<5> qid, bit<32> meter_id, bit<3> icos) {
         meta.intrinsic_metadata.qid = qid;
         meta.intrinsic_metadata.ingress_cos = icos;
-        clone3(CloneType.I2E, (bit<32>)32w250, { meta.ingress_metadata.bd, meta.ingress_metadata.ifindex, meta.fabric_metadata.reason_code, meta.ingress_metadata.ingress_port });
-        copp.execute_meter((bit<32>)meter_id, meta.intrinsic_metadata.packet_color);
     }
     action redirect_to_cpu(bit<5> qid, bit<32> meter_id, bit<3> icos) {
-        copy_to_cpu(qid, meter_id, icos);
-        mark_to_drop();
         meta.fabric_metadata.dst_device = 8w0;
     }
     action copy_to_cpu_with_reason(bit<16> reason_code, bit<5> qid, bit<32> meter_id, bit<3> icos) {
         meta.fabric_metadata.reason_code = reason_code;
-        copy_to_cpu(qid, meter_id, icos);
     }
     action redirect_to_cpu_with_reason(bit<16> reason_code, bit<5> qid, bit<32> meter_id, bit<3> icos) {
-        copy_to_cpu_with_reason(reason_code, qid, meter_id, icos);
-        mark_to_drop();
         meta.fabric_metadata.dst_device = 8w0;
-    }
-    action drop_packet() {
-        mark_to_drop();
-    }
-    action drop_packet_with_reason(bit<32> drop_reason) {
-        drop_stats.count((bit<32>)drop_reason);
-        mark_to_drop();
-    }
-    action negative_mirror(bit<32> session_id) {
-        clone3(CloneType.I2E, (bit<32>)session_id, { meta.ingress_metadata.ifindex, meta.ingress_metadata.drop_reason });
-        mark_to_drop();
     }
     table system_acl {
         actions = {
@@ -2513,9 +2489,6 @@ system_acl_content = '''
             redirect_to_cpu_with_reason;
             copy_to_cpu;
             copy_to_cpu_with_reason;
-            drop_packet;
-            drop_packet_with_reason;
-            negative_mirror;
         }
         key = {
             meta.acl_metadata.if_label               : exact;
