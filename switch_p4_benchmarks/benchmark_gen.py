@@ -11,7 +11,7 @@ table_list = ["ingress_port_mapping", "ingress_port_properties", "validate_outer
         "ip_acl", "ip_acl", "ipv4_racl", "ipv4_urpf", "ipv4_urpf_lpm", "ipv4_fib", "ipv4_fib_lpm", "ipv6_racl", "ipv6_urpf", "ipv6_urpf_lpm", "ipv6_fib",
         "ipv6_fib_lpm", "urpf_bd", "ipv4_multicast_bridge", "ipv4_multicast_bridge_star_g", "ipv4_multicast_route", "ipv4_multicast_route_star_g",
         "ipv6_multicast_bridge", "ipv6_multicast_bridge_star_g", "ipv6_multicast_route", "ipv6_multicast_route_star_g", "nat_dst", "nat_flow",
-        "nat_src", "nat_twice", "meter_index_0", "compute_ipv4_hashes", "compute_ipv6_hashes", "compute_non_ip_hashes", "compute_other_hashes",
+        "nat_src", "nat_twice", "meter_index_0",
         "meter_action", "ingress_bd_stats_0", "acl_stats_0", "fwd_result", "ecmp_group", "nexthop", "bd_flood", "lag_group", "learn_notify", "fabric_lag", "traffic_class",
         "drop_stats_0", "system_acl", "storm_control_stats_0"]
 table_def = {}
@@ -2064,70 +2064,70 @@ meter_index_0_content = '''
     }'''
 table_def["meter_index_0"] = meter_index_0_content
 
-compute_ipv4_hashes_content = '''
-    action compute_lkp_ipv4_hash() {
-        hash(meta.hash_metadata.hash1, HashAlgorithm.crc16, (bit<16>)0, { meta.ipv4_metadata.lkp_ipv4_sa, meta.ipv4_metadata.lkp_ipv4_da, meta.l3_metadata.lkp_ip_proto, meta.l3_metadata.lkp_l4_sport, meta.l3_metadata.lkp_l4_dport }, (bit<32>)65536);
-        hash(meta.hash_metadata.hash2, HashAlgorithm.crc16, (bit<16>)0, { meta.l2_metadata.lkp_mac_sa, meta.l2_metadata.lkp_mac_da, meta.ipv4_metadata.lkp_ipv4_sa, meta.ipv4_metadata.lkp_ipv4_da, meta.l3_metadata.lkp_ip_proto, meta.l3_metadata.lkp_l4_sport, meta.l3_metadata.lkp_l4_dport }, (bit<32>)65536);
-    }
-    table compute_ipv4_hashes {
-        actions = {
-            compute_lkp_ipv4_hash;
-        }
-        key = {
-            meta.ingress_metadata.drop_flag: exact;
-        }
-    }'''
-table_def["compute_ipv4_hashes"] = compute_ipv4_hashes_content
+# compute_ipv4_hashes_content = '''
+#     action compute_lkp_ipv4_hash() {
+#         hash(meta.hash_metadata.hash1, HashAlgorithm.crc16, (bit<16>)0, { meta.ipv4_metadata.lkp_ipv4_sa, meta.ipv4_metadata.lkp_ipv4_da, meta.l3_metadata.lkp_ip_proto, meta.l3_metadata.lkp_l4_sport, meta.l3_metadata.lkp_l4_dport }, (bit<32>)65536);
+#         hash(meta.hash_metadata.hash2, HashAlgorithm.crc16, (bit<16>)0, { meta.l2_metadata.lkp_mac_sa, meta.l2_metadata.lkp_mac_da, meta.ipv4_metadata.lkp_ipv4_sa, meta.ipv4_metadata.lkp_ipv4_da, meta.l3_metadata.lkp_ip_proto, meta.l3_metadata.lkp_l4_sport, meta.l3_metadata.lkp_l4_dport }, (bit<32>)65536);
+#     }
+#     table compute_ipv4_hashes {
+#         actions = {
+#             compute_lkp_ipv4_hash;
+#         }
+#         key = {
+#             meta.ingress_metadata.drop_flag: exact;
+#         }
+#     }'''
+# table_def["compute_ipv4_hashes"] = compute_ipv4_hashes_content
 
-compute_ipv6_hashes_content = '''
-    action compute_lkp_ipv6_hash() {
-        hash(meta.hash_metadata.hash1, HashAlgorithm.crc16, (bit<16>)0, { meta.ipv6_metadata.lkp_ipv6_sa, meta.ipv6_metadata.lkp_ipv6_da, meta.l3_metadata.lkp_ip_proto, meta.l3_metadata.lkp_l4_sport, meta.l3_metadata.lkp_l4_dport }, (bit<32>)65536);
-        hash(meta.hash_metadata.hash2, HashAlgorithm.crc16, (bit<16>)0, { meta.l2_metadata.lkp_mac_sa, meta.l2_metadata.lkp_mac_da, meta.ipv6_metadata.lkp_ipv6_sa, meta.ipv6_metadata.lkp_ipv6_da, meta.l3_metadata.lkp_ip_proto, meta.l3_metadata.lkp_l4_sport, meta.l3_metadata.lkp_l4_dport }, (bit<32>)65536);
-    }
-    table compute_ipv6_hashes {
-        actions = {
-            compute_lkp_ipv6_hash;
-        }
-        key = {
-            meta.ingress_metadata.drop_flag: exact;
-        }
-    }'''
-table_def["compute_ipv6_hashes"] = compute_ipv6_hashes_content
+# compute_ipv6_hashes_content = '''
+#     action compute_lkp_ipv6_hash() {
+#         hash(meta.hash_metadata.hash1, HashAlgorithm.crc16, (bit<16>)0, { meta.ipv6_metadata.lkp_ipv6_sa, meta.ipv6_metadata.lkp_ipv6_da, meta.l3_metadata.lkp_ip_proto, meta.l3_metadata.lkp_l4_sport, meta.l3_metadata.lkp_l4_dport }, (bit<32>)65536);
+#         hash(meta.hash_metadata.hash2, HashAlgorithm.crc16, (bit<16>)0, { meta.l2_metadata.lkp_mac_sa, meta.l2_metadata.lkp_mac_da, meta.ipv6_metadata.lkp_ipv6_sa, meta.ipv6_metadata.lkp_ipv6_da, meta.l3_metadata.lkp_ip_proto, meta.l3_metadata.lkp_l4_sport, meta.l3_metadata.lkp_l4_dport }, (bit<32>)65536);
+#     }
+#     table compute_ipv6_hashes {
+#         actions = {
+#             compute_lkp_ipv6_hash;
+#         }
+#         key = {
+#             meta.ingress_metadata.drop_flag: exact;
+#         }
+#     }'''
+# table_def["compute_ipv6_hashes"] = compute_ipv6_hashes_content
 
-compute_non_ip_hashes_content = '''
-    action compute_lkp_non_ip_hash() {
-        hash(meta.hash_metadata.hash2, HashAlgorithm.crc16, (bit<16>)0, { meta.ingress_metadata.ifindex, meta.l2_metadata.lkp_mac_sa, meta.l2_metadata.lkp_mac_da, meta.l2_metadata.lkp_mac_type }, (bit<32>)65536);
-    }
-    table compute_non_ip_hashes {
-        actions = {
-            compute_lkp_non_ip_hash;
-        }
-        key = {
-            meta.ingress_metadata.drop_flag: exact;
-        }
-    }'''
-table_def["compute_non_ip_hashes"] = compute_non_ip_hashes_content
+# compute_non_ip_hashes_content = '''
+#     action compute_lkp_non_ip_hash() {
+#         hash(meta.hash_metadata.hash2, HashAlgorithm.crc16, (bit<16>)0, { meta.ingress_metadata.ifindex, meta.l2_metadata.lkp_mac_sa, meta.l2_metadata.lkp_mac_da, meta.l2_metadata.lkp_mac_type }, (bit<32>)65536);
+#     }
+#     table compute_non_ip_hashes {
+#         actions = {
+#             compute_lkp_non_ip_hash;
+#         }
+#         key = {
+#             meta.ingress_metadata.drop_flag: exact;
+#         }
+#     }'''
+# table_def["compute_non_ip_hashes"] = compute_non_ip_hashes_content
 
-compute_other_hashes_content = '''
-    action computed_two_hashes() {
-        meta.intrinsic_metadata.mcast_hash = (bit<13>)meta.hash_metadata.hash1;
-        meta.hash_metadata.entropy_hash = meta.hash_metadata.hash2;
-    }
-    action computed_one_hash() {
-        meta.hash_metadata.hash1 = meta.hash_metadata.hash2;
-        meta.intrinsic_metadata.mcast_hash = (bit<13>)meta.hash_metadata.hash2;
-        meta.hash_metadata.entropy_hash = meta.hash_metadata.hash2;
-    }
-    table compute_other_hashes {
-        actions = {
-            computed_two_hashes;
-            computed_one_hash;
-        }
-        key = {
-            meta.hash_metadata.hash1: exact;
-        }
-    }'''
-table_def["compute_other_hashes"] = compute_other_hashes_content
+# compute_other_hashes_content = '''
+#     action computed_two_hashes() {
+#         meta.intrinsic_metadata.mcast_hash = (bit<13>)meta.hash_metadata.hash1;
+#         meta.hash_metadata.entropy_hash = meta.hash_metadata.hash2;
+#     }
+#     action computed_one_hash() {
+#         meta.hash_metadata.hash1 = meta.hash_metadata.hash2;
+#         meta.intrinsic_metadata.mcast_hash = (bit<13>)meta.hash_metadata.hash2;
+#         meta.hash_metadata.entropy_hash = meta.hash_metadata.hash2;
+#     }
+#     table compute_other_hashes {
+#         actions = {
+#             computed_two_hashes;
+#             computed_one_hash;
+#         }
+#         key = {
+#             meta.hash_metadata.hash1: exact;
+#         }
+#     }'''
+# table_def["compute_other_hashes"] = compute_other_hashes_content
 
 meter_action_content = '''
     direct_counter(CounterType.packets) meter_stats;
