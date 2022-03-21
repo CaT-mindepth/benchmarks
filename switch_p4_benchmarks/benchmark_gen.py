@@ -1332,7 +1332,6 @@ ip_acl_content = '''
     }
     table ip_acl {
         actions = {
-            
             acl_deny;
             acl_permit;
             acl_redirect_nexthop;
@@ -1408,7 +1407,7 @@ ipv6_acl_content = '''
         meta.meter_metadata.packet_color = color;
     }
 
-    table ip_acl {
+    table ipv6_acl {
         actions = {
             
             acl_deny;
@@ -1431,7 +1430,7 @@ ipv6_acl_content = '''
         size = 512;
     }'''
 
-table_def["ip_acl"] = ipv6_acl_content
+table_def["ipv6_acl"] = ipv6_acl_content
 
 ipv4_racl_content = '''
     action racl_deny(bit<32> acl_stats_index, bit<32> acl_copy_reason, bit<32> ingress_cos, bit<32> tc, bit<32> color) {
