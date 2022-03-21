@@ -306,8 +306,6 @@ spanning_tree_content = '''
 table_def["spanning_tree"] = spanning_tree_content
 
 ingress_qos_map_dscp_content = '''
-    action nop() {
-    }
     action set_ingress_tc(bit<8> tc) {
         meta.qos_metadata.lkp_tc = tc;
     }
@@ -320,7 +318,7 @@ ingress_qos_map_dscp_content = '''
     }
     table ingress_qos_map_dscp {
         actions = {
-            nop;
+            
             set_ingress_tc;
             set_ingress_color;
             set_ingress_tc_and_color;
@@ -334,8 +332,6 @@ ingress_qos_map_dscp_content = '''
 table_def["ingress_qos_map_dscp"] = ingress_qos_map_dscp_content
 
 ingress_qos_map_pcp_content = '''
-    action nop() {
-    }
     action set_ingress_tc(bit<8> tc) {
         meta.qos_metadata.lkp_tc = tc;
     }
@@ -348,7 +344,7 @@ ingress_qos_map_pcp_content = '''
     }
     table ingress_qos_map_pcp {
         actions = {
-            nop;
+            
             set_ingress_tc;
             set_ingress_color;
             set_ingress_tc_and_color;
@@ -402,12 +398,10 @@ int_sink_update_outer_content = '''
         hdr.ipv4.totalLen = hdr.ipv4.totalLen - meta.int_metadata.insert_byte_cnt;
         hdr.udp.length_ = hdr.udp.length_ - meta.int_metadata.insert_byte_cnt;
     }
-    action nop() {
-    }
     table int_sink_update_outer {
         actions = {
             int_sink_update_vxlan_gpe_v4;
-            nop;
+            
         }
         key = {
             hdr.vxlan_gpe_int_header.isValid(): exact;
@@ -476,14 +470,12 @@ int_terminate_content = '''
 table_def["int_terminate"] = int_terminate_content
 
 sflow_ing_take_sample_content = '''
-    action nop() {
-    }
     action sflow_ing_pkt_to_cpu(bit<32> sflow_i2e_mirror_id) {
         meta.i2e_metadata.mirror_session_id = (bit<16>)sflow_i2e_mirror_id;
     }
     table sflow_ing_take_sample {
         actions = {
-            nop;
+            
             sflow_ing_pkt_to_cpu;
         }
         key = {
@@ -573,8 +565,6 @@ outer_rmac_content = '''
 table_def["outer_rmac"] = outer_rmac_content
 
 tunnel_content = '''
-    action nop() {
-    }
     action tunnel_lookup_miss() {
     }
     action terminate_tunnel_inner_non_ip(bit<16> bd, bit<16> bd_label, bit<16> stats_idx) {
@@ -645,7 +635,7 @@ tunnel_content = '''
     }
     table tunnel {
         actions = {
-            nop;
+            
             tunnel_lookup_miss;
             terminate_tunnel_inner_non_ip;
             terminate_tunnel_inner_ethernet_ipv4;
@@ -704,8 +694,6 @@ tunnel_lookup_miss_0_content = '''
 table_def["tunnel_lookup_miss_0"] = tunnel_lookup_miss_0_content
 
 fabric_ingress_dst_lkp_content = '''
-    action nop() {
-    }
     action terminate_cpu_packet() {
         standard_metadata.egress_spec = (bit<9>)hdr.fabric_header.dstPortOrGroup;
         meta.egress_metadata.bypass = hdr.fabric_header_cpu.txBypass;
@@ -750,7 +738,7 @@ fabric_ingress_dst_lkp_content = '''
     }
     table fabric_ingress_dst_lkp {
         actions = {
-            nop;
+            
             terminate_cpu_packet;
             switch_fabric_unicast_packet;
             terminate_fabric_unicast_packet;
@@ -764,13 +752,11 @@ fabric_ingress_dst_lkp_content = '''
 table_def["fabric_ingress_dst_lkp"] = fabric_ingress_dst_lkp_content
 
 fabric_ingress_src_lkp_content = '''
-    action nop() {
-    }
     action set_ingress_ifindex_properties() {
     }
     table fabric_ingress_src_lkp {
         actions = {
-            nop;
+            
             set_ingress_ifindex_properties;
         }
         key = {
@@ -819,8 +805,6 @@ native_packet_over_fabric_content = '''
 table_def["native_packet_over_fabric"] = native_packet_over_fabric_content
 
 ipv4_dest_vtep_content = '''
-    action nop() {
-    }
     action set_tunnel_termination_flag() {
         meta.tunnel_metadata.tunnel_terminate = 1w1;
     }
@@ -830,7 +814,7 @@ ipv4_dest_vtep_content = '''
     }
     table ipv4_dest_vtep {
         actions = {
-            nop;
+            
             set_tunnel_termination_flag;
             set_tunnel_vni_and_termination_flag;
         }
@@ -865,8 +849,6 @@ ipv4_src_vtep_content = '''
 table_def["ipv4_src_vtep"] = ipv4_src_vtep_content
 
 ipv6_dest_vtep_content = '''
-    action nop() {
-    }
     action set_tunnel_termination_flag() {
         meta.tunnel_metadata.tunnel_terminate = 1w1;
     }
@@ -876,7 +858,7 @@ ipv6_dest_vtep_content = '''
     }
     table ipv6_dest_vtep {
         actions = {
-            nop;
+            
             set_tunnel_termination_flag;
             set_tunnel_vni_and_termination_flag;
         }
@@ -973,8 +955,6 @@ mpls_0_content = '''
 table_def["mpls_0"] = mpls_0_content
 
 outer_ipv4_multicast_content = '''
-    action nop() {
-    }
     action on_miss() {
     }
     action outer_multicast_route_s_g_hit(bit<16> mc_index, bit<16> mcast_rpf_group) {
@@ -990,7 +970,7 @@ outer_ipv4_multicast_content = '''
     }
     table outer_ipv4_multicast {
         actions = {
-            nop;
+            
             on_miss;
             outer_multicast_route_s_g_hit;
             outer_multicast_bridge_s_g_hit;
@@ -1006,8 +986,6 @@ outer_ipv4_multicast_content = '''
 table_def["outer_ipv4_multicast"] = outer_ipv4_multicast_content
 
 outer_ipv4_multicast_star_g_content = '''
-    action nop() {
-    }
     action outer_multicast_route_sm_star_g_hit(bit<16> mc_index, bit<16> mcast_rpf_group) {
         meta.multicast_metadata.outer_mcast_mode = 2w1;
         meta.intrinsic_metadata.mcast_grp = mc_index;
@@ -1029,7 +1007,7 @@ outer_ipv4_multicast_star_g_content = '''
     }
     table outer_ipv4_multicast_star_g {
         actions = {
-            nop;
+            
             outer_multicast_route_sm_star_g_hit;
             outer_multicast_route_bidir_star_g_hit;
             outer_multicast_bridge_star_g_hit;
@@ -1044,8 +1022,6 @@ outer_ipv4_multicast_star_g_content = '''
 table_def["outer_ipv4_multicast_star_g"] = outer_ipv4_multicast_star_g_content
 
 outer_ipv6_multicast_content = '''
-    action nop() {
-    }
     action on_miss() {
     }
     action outer_multicast_route_s_g_hit(bit<16> mc_index, bit<16> mcast_rpf_group) {
@@ -1061,7 +1037,7 @@ outer_ipv6_multicast_content = '''
     }
     table outer_ipv6_multicast {
         actions = {
-            nop;
+            
             on_miss;
             outer_multicast_route_s_g_hit;
             outer_multicast_bridge_s_g_hit;
@@ -1077,8 +1053,6 @@ outer_ipv6_multicast_content = '''
 table_def["outer_ipv6_multicast"] = outer_ipv6_multicast_content
 
 outer_ipv6_multicast_star_g_content = '''
-    action nop() {
-    }
     action outer_multicast_route_sm_star_g_hit(bit<16> mc_index, bit<16> mcast_rpf_group) {
         meta.multicast_metadata.outer_mcast_mode = 2w1;
         meta.intrinsic_metadata.mcast_grp = mc_index;
@@ -1100,7 +1074,7 @@ outer_ipv6_multicast_star_g_content = '''
     }
     table outer_ipv6_multicast_star_g {
         actions = {
-            nop;
+            
             outer_multicast_route_sm_star_g_hit;
             outer_multicast_route_bidir_star_g_hit;
             outer_multicast_bridge_star_g_hit;
@@ -1116,15 +1090,13 @@ table_def["outer_ipv6_multicast_star_g"] = outer_ipv6_multicast_star_g_content
 
 
 storm_control_content = '''
-    action nop() {
-    }
     action set_storm_control_meter(bit<32> meter_idx) {
         storm_control_meter.execute_meter((bit<32>)meter_idx, meta.meter_metadata.packet_color);
         meta.meter_metadata.meter_index = (bit<16>)meter_idx;
     }
     table storm_control {
         actions = {
-            nop;
+            
             set_storm_control_meter;
         }
         key = {
@@ -1136,8 +1108,6 @@ storm_control_content = '''
 table_def["storm_control"] = storm_control_content
 
 validate_packet_content = '''
-    action nop() {
-    }
     action set_unicast() {
         meta.l2_metadata.lkp_pkt_type = 3w1;
     }
@@ -1164,7 +1134,7 @@ validate_packet_content = '''
     }
     table validate_packet {
         actions = {
-            nop;
+            
             set_unicast;
             set_unicast_and_ipv6_src_is_link_local;
             set_multicast;
@@ -1186,14 +1156,12 @@ validate_packet_content = '''
 table_def["validate_packet"] = validate_packet_content
 
 ingress_l4_dst_port_content = '''
-    action nop() {
-    }
     action set_ingress_dst_port_range_id(bit<8> range_id) {
         meta.acl_metadata.ingress_dst_port_range_id = range_id;
     }
     table ingress_l4_dst_port {
         actions = {
-            nop;
+            
             set_ingress_dst_port_range_id;
         }
         key = {
@@ -1204,14 +1172,12 @@ ingress_l4_dst_port_content = '''
 table_def["ingress_l4_dst_port"] = ingress_l4_dst_port_content
 
 ingress_l4_src_port_content = '''
-    action nop() {
-    }
     action set_ingress_src_port_range_id(bit<8> range_id) {
         meta.acl_metadata.ingress_src_port_range_id = range_id;
     }
     table ingress_l4_src_port {
         actions = {
-            nop;
+            
             set_ingress_src_port_range_id;
         }
         key = {
@@ -1222,8 +1188,6 @@ ingress_l4_src_port_content = '''
 table_def["ingress_l4_src_port"] = ingress_l4_src_port_content
 
 dmac_content = '''
-    action nop() {
-    }
     action dmac_hit(bit<16> ifindex) {
         meta.ingress_metadata.egress_ifindex = ifindex;
         meta.l2_metadata.same_if_check = meta.l2_metadata.same_if_check ^ ifindex;
@@ -1252,7 +1216,7 @@ dmac_content = '''
     table dmac {
         support_timeout = true;
         actions = {
-            nop;
+            
             dmac_hit;
             dmac_multicast_hit;
             dmac_miss;
@@ -1269,8 +1233,6 @@ dmac_content = '''
 table_def["dmac"] = dmac_content
 
 smac_content = '''
-    action nop() {
-    }
     action smac_miss() {
         meta.l2_metadata.l2_src_miss = 1w1;
     }
@@ -1279,7 +1241,7 @@ smac_content = '''
     }
     table smac {
         actions = {
-            nop;
+            
             smac_miss;
             smac_hit;
         }
@@ -1292,8 +1254,6 @@ smac_content = '''
 table_def["smac"] = smac_content
 
 mac_acl_content = '''
-    action nop() {
-    }
     action acl_deny(bit<14> acl_stats_index, bit<16> acl_meter_index, bit<16> acl_copy_reason, bit<2> nat_mode, bit<3> ingress_cos, bit<8> tc, bit<2> color) {
         meta.acl_metadata.acl_deny = 1w1;
         meta.acl_metadata.acl_stats_index = acl_stats_index;
@@ -1349,7 +1309,7 @@ mac_acl_content = '''
     }
     table mac_acl {
         actions = {
-            nop;
+            
             acl_deny;
             acl_permit;
             acl_redirect_nexthop;
@@ -1368,8 +1328,6 @@ mac_acl_content = '''
 table_def["mac_acl"] = mac_acl_content
 
 ip_acl_content = '''
-    action nop() {
-    }
     action acl_deny(bit<14> acl_stats_index, bit<16> acl_meter_index, bit<16> acl_copy_reason, bit<2> nat_mode, bit<3> ingress_cos, bit<8> tc, bit<2> color) {
         meta.acl_metadata.acl_deny = 1w1;
         meta.acl_metadata.acl_stats_index = acl_stats_index;
@@ -1425,7 +1383,7 @@ ip_acl_content = '''
     }
     table ip_acl {
         actions = {
-            nop;
+            
             acl_deny;
             acl_permit;
             acl_redirect_nexthop;
@@ -1448,8 +1406,6 @@ ip_acl_content = '''
 table_def["ip_acl"] = ip_acl_content
 
 ipv6_acl_content = '''
-    action nop() {
-    }
     action acl_deny(bit<14> acl_stats_index, bit<16> acl_meter_index, bit<16> acl_copy_reason, bit<2> nat_mode, bit<3> ingress_cos, bit<8> tc, bit<2> color) {
         meta.acl_metadata.acl_deny = 1w1;
         meta.acl_metadata.acl_stats_index = acl_stats_index;
@@ -1506,7 +1462,7 @@ ipv6_acl_content = '''
 
     table ip_acl {
         actions = {
-            nop;
+            
             acl_deny;
             acl_permit;
             acl_redirect_nexthop;
@@ -1530,8 +1486,6 @@ ipv6_acl_content = '''
 table_def["ip_acl"] = ipv6_acl_content
 
 ipv4_racl_content = '''
-    action nop() {
-    }
     action racl_deny(bit<14> acl_stats_index, bit<16> acl_copy_reason, bit<3> ingress_cos, bit<8> tc, bit<2> color) {
         meta.acl_metadata.racl_deny = 1w1;
         meta.acl_metadata.acl_stats_index = acl_stats_index;
@@ -1569,7 +1523,7 @@ ipv4_racl_content = '''
     }
     table ipv4_racl {
         actions = {
-            nop;
+            
             racl_deny;
             racl_permit;
             racl_redirect_nexthop;
@@ -1685,8 +1639,6 @@ ipv4_fib_lpm_content = '''
 table_def["ipv4_fib_lpm"] = ipv4_fib_lpm_content
 
 ipv6_racl_content = '''
-    action nop() {
-    }
     action racl_deny(bit<14> acl_stats_index, bit<16> acl_copy_reason, bit<3> ingress_cos, bit<8> tc, bit<2> color) {
         meta.acl_metadata.racl_deny = 1w1;
         meta.acl_metadata.acl_stats_index = acl_stats_index;
@@ -1724,7 +1676,7 @@ ipv6_racl_content = '''
     }
     table ipv6_racl {
         actions = {
-            nop;
+            
             racl_deny;
             racl_permit;
             racl_redirect_nexthop;
@@ -1840,14 +1792,12 @@ ipv6_fib_lpm_content = '''
 table_def["ipv6_fib_lpm"] = ipv6_fib_lpm_content
 
 urpf_bd_content = '''
-    action nop() {
-    }
     action urpf_bd_miss() {
         meta.l3_metadata.urpf_check_fail = 1w1;
     }
     table urpf_bd {
         actions = {
-            nop;
+            
             urpf_bd_miss;
         }
         key = {
@@ -1880,15 +1830,13 @@ ipv4_multicast_bridge_content = '''
 table_def["ipv4_multicast_bridge"] = ipv4_multicast_bridge_content
 
 ipv4_multicast_bridge_star_g_content = '''
-    action nop() {
-    }
     action multicast_bridge_star_g_hit(bit<16> mc_index) {
         meta.multicast_metadata.multicast_bridge_mc_index = mc_index;
         meta.multicast_metadata.mcast_bridge_hit = 1w1;
     }
     table ipv4_multicast_bridge_star_g {
         actions = {
-            nop;
+            
             multicast_bridge_star_g_hit;
         }
         key = {
@@ -1981,15 +1929,13 @@ ipv6_multicast_bridge_content = '''
 table_def["ipv6_multicast_bridge"] = ipv6_multicast_bridge_content
 
 ipv6_multicast_bridge_star_g_content = '''
-    action nop() {
-    }
     action multicast_bridge_star_g_hit(bit<16> mc_index) {
         meta.multicast_metadata.multicast_bridge_mc_index = mc_index;
         meta.multicast_metadata.mcast_bridge_hit = 1w1;
     }
     table ipv6_multicast_bridge_star_g {
         actions = {
-            nop;
+            
             multicast_bridge_star_g_hit;
         }
         key = {
@@ -2091,8 +2037,6 @@ nat_flow_content = '''
         meta.nat_metadata.nat_rewrite_index = nat_rewrite_index;
         meta.nat_metadata.nat_hit = 1w1;
     }
-    action nop() {
-    }
     action set_src_nat_rewrite_index(bit<14> nat_rewrite_index) {
         meta.nat_metadata.nat_rewrite_index = nat_rewrite_index;
     }
@@ -2104,7 +2048,7 @@ nat_flow_content = '''
     }
     table nat_flow {
         actions = {
-            nop;
+            
             set_src_nat_rewrite_index;
             set_dst_nat_nexthop_index;
             set_twice_nat_nexthop_index;
@@ -2170,8 +2114,6 @@ table_def["nat_twice"] = nat_twice_content
 
 meter_index_0_content = '''
     direct_meter<bit<2>>(MeterType.bytes) meter_index;
-    action nop() {
-    }
     action nop_2() {
         meter_index.read(meta.meter_metadata.packet_color);
     }
@@ -2308,8 +2250,6 @@ table_def["acl_stats_0"] = acl_stats_0_content
 
 storm_control_stats_0_content = '''
     direct_counter(CounterType.packets) storm_control_stats;
-    action nop() {
-    }
     action nop_3() {
         storm_control_stats.count();
     }
@@ -2327,8 +2267,6 @@ storm_control_stats_0_content = '''
 table_def["storm_control_stats_0"] = storm_control_stats_0_content
 
 fwd_result_content = '''
-    action nop() {
-    }
     action set_l2_redirect_action() {
         meta.l3_metadata.nexthop_index = meta.l2_metadata.l2_nexthop;
         meta.nexthop_metadata.nexthop_type = meta.l2_metadata.l2_nexthop_type;
@@ -2395,7 +2333,7 @@ fwd_result_content = '''
     }
     table fwd_result {
         actions = {
-            nop;
+            
             set_l2_redirect_action;
             set_fib_redirect_action;
             set_cpu_redirect_action;
@@ -2428,8 +2366,6 @@ fwd_result_content = '''
 table_def["fwd_result"] = fwd_result_content
     
 ecmp_group_content = '''
-    action nop() {
-    }
     action set_ecmp_nexthop_details(bit<16> ifindex, bit<16> bd, bit<16> nhop_index, bit<1> tunnel) {
         meta.ingress_metadata.egress_ifindex = ifindex;
         meta.l3_metadata.nexthop_index = nhop_index;
@@ -2446,7 +2382,6 @@ ecmp_group_content = '''
     }
     table ecmp_group {
         actions = {
-            nop;
             set_ecmp_nexthop_details;
             set_ecmp_nexthop_details_for_post_routed_flood;
         }
@@ -2474,7 +2409,7 @@ nexthop_content = '''
     }
     table nexthop {
         actions = {
-            nop;
+            
             set_nexthop_details;
             set_nexthop_details_for_post_routed_flood;
         }
@@ -2486,14 +2421,12 @@ nexthop_content = '''
 table_def["nexthop"] = nexthop_content
 
 bd_flood_content = '''
-    action nop() {
-    }
     action set_bd_flood_mc_index(bit<16> mc_index) {
         meta.intrinsic_metadata.mcast_grp = mc_index;
     }
     table bd_flood {
         actions = {
-            nop;
+            
             set_bd_flood_mc_index;
         }
         key = {
@@ -2530,14 +2463,12 @@ lag_group_content = '''
 table_def["lag_group"] = lag_group_content
 
 learn_notify_content = '''
-    @name(".nop") action nop() {
-    }
     @name(".generate_learn_notify") action generate_learn_notify() {
         digest<mac_learn_digest>((bit<32>)1024, { meta.ingress_metadata.bd, meta.l2_metadata.lkp_mac_sa, meta.ingress_metadata.ifindex });
     }
     @name(".learn_notify") table learn_notify {
         actions = {
-            nop;
+            
             generate_learn_notify;
         }
         key = {
@@ -2550,8 +2481,6 @@ learn_notify_content = '''
 table_def["learn_notify"] = learn_notify_content
 
 fabric_lag_content = '''
-    action nop() {
-    }
     action set_fabric_lag_port(bit<9> port) {
         standard_metadata.egress_spec = port;
     }
@@ -2560,7 +2489,7 @@ fabric_lag_content = '''
     }
     table fabric_lag {
         actions = {
-            nop;
+            
             set_fabric_lag_port;
             set_fabric_multicast;
         }
@@ -2573,8 +2502,6 @@ fabric_lag_content = '''
 table_def["fabric_lag"] = fabric_lag_content
 
 traffic_class_content = '''
-    action nop() {
-    }
     action set_icos(bit<3> icos) {
         meta.intrinsic_metadata.ingress_cos = icos;
     }
@@ -2587,7 +2514,7 @@ traffic_class_content = '''
     }
     table traffic_class {
         actions = {
-            nop;
+            
             set_icos;
             set_queue;
             set_icos_and_queue;
@@ -2614,8 +2541,6 @@ drop_stats_0_content = '''
 table_def["drop_stats_0"] = drop_stats_0_content
 
 system_acl_content = '''
-    action nop() {
-    }
     action copy_to_cpu(bit<5> qid, bit<32> meter_id, bit<3> icos) {
         meta.intrinsic_metadata.qid = qid;
         meta.intrinsic_metadata.ingress_cos = icos;
@@ -2649,7 +2574,6 @@ system_acl_content = '''
     }
     table system_acl {
         actions = {
-            nop;
             redirect_to_cpu;
             redirect_to_cpu_with_reason;
             copy_to_cpu;
@@ -2803,8 +2727,8 @@ def main(argv):
     for t in list_t:
         out_str += table_def[t]
     out_str += "\n"
-    for t in list_t:
-        out_str += "apply(" + t + ");\n"
+    # for t in list_t:
+    #     out_str += "apply(" + t + ");\n"
     print(out_str)
 if __name__ == "__main__":
     main(sys.argv)
