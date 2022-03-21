@@ -11,8 +11,8 @@ table_list = ["ingress_port_mapping", "ingress_port_properties", "validate_outer
         "ip_acl", "ip_acl", "ipv4_racl", "ipv4_urpf", "ipv4_urpf_lpm", "ipv4_fib", "ipv4_fib_lpm", "ipv6_racl", "ipv6_urpf", "ipv6_urpf_lpm", "ipv6_fib",
         "ipv6_fib_lpm", "urpf_bd", "ipv4_multicast_bridge", "ipv4_multicast_bridge_star_g", "ipv4_multicast_route", "ipv4_multicast_route_star_g",
         "ipv6_multicast_bridge", "ipv6_multicast_bridge_star_g", "ipv6_multicast_route", "ipv6_multicast_route_star_g", "nat_dst", "nat_flow",
-        "nat_src", "nat_twice", "meter_index_0", "ingress_bd_stats_0", "acl_stats_0", "fwd_result", "ecmp_group", "nexthop", "bd_flood", "lag_group", "learn_notify", "fabric_lag", "traffic_class",
-        "drop_stats_0", "system_acl", "storm_control_stats_0"]
+        "nat_src", "nat_twice", "meter_index_0", "fwd_result", "ecmp_group", "nexthop", "bd_flood", "lag_group", "learn_notify", "fabric_lag", "traffic_class",
+        "system_acl"]
 table_def = {}
 
 ingress_port_mapping_content =  '''
@@ -1788,11 +1788,7 @@ ipv4_multicast_bridge_star_g_content = '''
 table_def["ipv4_multicast_bridge_star_g"] = ipv4_multicast_bridge_star_g_content
 
 ipv4_multicast_route_content = '''
-    action on_miss_0() {
-        ipv4_multicast_route_s_g_stats.count();
-    }
     action multicast_route_s_g_hit_0(bit<16> mc_index, bit<16> mcast_rpf_group) {
-        ipv4_multicast_route_s_g_stats.count();
         meta.multicast_metadata.multicast_route_mc_index = mc_index;
         meta.multicast_metadata.mcast_mode = 2w1;
         meta.multicast_metadata.mcast_route_hit = 1w1;
@@ -1800,7 +1796,6 @@ ipv4_multicast_route_content = '''
     }
     table ipv4_multicast_route {
         actions = {
-            on_miss_0;
             multicast_route_s_g_hit_0;
         }
         key = {
@@ -1815,18 +1810,15 @@ table_def["ipv4_multicast_route"] = ipv4_multicast_route_content
 
 ipv4_multicast_route_star_g_content = '''
     action multicast_route_star_g_miss_0() {
-        ipv4_multicast_route_star_g_stats.count();
         meta.l3_metadata.l3_copy = 1w1;
     }
     action multicast_route_sm_star_g_hit_0(bit<16> mc_index, bit<16> mcast_rpf_group) {
-        ipv4_multicast_route_star_g_stats.count();
         meta.multicast_metadata.mcast_mode = 2w1;
         meta.multicast_metadata.multicast_route_mc_index = mc_index;
         meta.multicast_metadata.mcast_route_hit = 1w1;
         meta.multicast_metadata.mcast_rpf_group = mcast_rpf_group ^ meta.multicast_metadata.bd_mrpf_group;
     }
     action multicast_route_bidir_star_g_hit_0(bit<16> mc_index, bit<16> mcast_rpf_group) {
-        ipv4_multicast_route_star_g_stats.count();
         meta.multicast_metadata.mcast_mode = 2w2;
         meta.multicast_metadata.multicast_route_mc_index = mc_index;
         meta.multicast_metadata.mcast_route_hit = 1w1;
@@ -1885,11 +1877,7 @@ ipv6_multicast_bridge_star_g_content = '''
 table_def["ipv6_multicast_bridge_star_g"] = ipv6_multicast_bridge_star_g_content
 
 ipv6_multicast_route_content = '''
-    action on_miss_1() {
-        ipv6_multicast_route_s_g_stats.count();
-    }
     action multicast_route_s_g_hit_1(bit<16> mc_index, bit<16> mcast_rpf_group) {
-        ipv6_multicast_route_s_g_stats.count();
         meta.multicast_metadata.multicast_route_mc_index = mc_index;
         meta.multicast_metadata.mcast_mode = 2w1;
         meta.multicast_metadata.mcast_route_hit = 1w1;
@@ -1897,7 +1885,6 @@ ipv6_multicast_route_content = '''
     }
     table ipv6_multicast_route {
         actions = {
-            on_miss_1;
             multicast_route_s_g_hit_1;
         }
         key = {
@@ -1912,18 +1899,15 @@ table_def["ipv6_multicast_route"] = ipv6_multicast_route_content
 
 ipv6_multicast_route_star_g_content = '''
     action multicast_route_star_g_miss_1() {
-        ipv6_multicast_route_star_g_stats.count();
         meta.l3_metadata.l3_copy = 1w1;
     }
     action multicast_route_sm_star_g_hit_1(bit<16> mc_index, bit<16> mcast_rpf_group) {
-        ipv6_multicast_route_star_g_stats.count();
         meta.multicast_metadata.mcast_mode = 2w1;
         meta.multicast_metadata.multicast_route_mc_index = mc_index;
         meta.multicast_metadata.mcast_route_hit = 1w1;
         meta.multicast_metadata.mcast_rpf_group = mcast_rpf_group ^ meta.multicast_metadata.bd_mrpf_group;
     }
     action multicast_route_bidir_star_g_hit_1(bit<16> mc_index, bit<16> mcast_rpf_group) {
-        ipv6_multicast_route_star_g_stats.count();
         meta.multicast_metadata.mcast_mode = 2w2;
         meta.multicast_metadata.multicast_route_mc_index = mc_index;
         meta.multicast_metadata.mcast_route_hit = 1w1;
@@ -2154,49 +2138,49 @@ table_def["meter_index_0"] = meter_index_0_content
 #     }'''
 # table_def["meter_action"] = meter_action_content
 
-ingress_bd_stats_0_content = '''
-    @min_width(32) counter(32w1024, CounterType.packets_and_bytes) ingress_bd_stats;
-    action update_ingress_bd_stats() {
-        ingress_bd_stats.count((bit<32>)(bit<32>)meta.l2_metadata.bd_stats_idx);
-    }
-    table ingress_bd_stats_0 {
-        actions = {
-            update_ingress_bd_stats;
-        }
-        size = 1024;
-    }'''
-table_def["ingress_bd_stats_0"] = ingress_bd_stats_0_content
+# ingress_bd_stats_0_content = '''
+#     @min_width(32) counter(32w1024, CounterType.packets_and_bytes) ingress_bd_stats;
+#     action update_ingress_bd_stats() {
+#         ingress_bd_stats.count((bit<32>)(bit<32>)meta.l2_metadata.bd_stats_idx);
+#     }
+#     table ingress_bd_stats_0 {
+#         actions = {
+#             update_ingress_bd_stats;
+#         }
+#         size = 1024;
+#     }'''
+# table_def["ingress_bd_stats_0"] = ingress_bd_stats_0_content
 
-acl_stats_0_content = '''
-    @min_width(16) counter(32w1024, CounterType.packets_and_bytes) acl_stats;
-    action acl_stats_update() {
-        acl_stats.count((bit<32>)(bit<32>)meta.acl_metadata.acl_stats_index);
-    }
-    table acl_stats_0 {
-        actions = {
-            acl_stats_update;
-        }
-        size = 1024;
-    }'''
-table_def["acl_stats_0"] = acl_stats_0_content
+# acl_stats_0_content = '''
+#     @min_width(16) counter(32w1024, CounterType.packets_and_bytes) acl_stats;
+#     action acl_stats_update() {
+#         acl_stats.count((bit<32>)(bit<32>)meta.acl_metadata.acl_stats_index);
+#     }
+#     table acl_stats_0 {
+#         actions = {
+#             acl_stats_update;
+#         }
+#         size = 1024;
+#     }'''
+# table_def["acl_stats_0"] = acl_stats_0_content
 
-storm_control_stats_0_content = '''
-    direct_counter(CounterType.packets) storm_control_stats;
-    action nop_3() {
-        storm_control_stats.count();
-    }
-    table storm_control_stats_0 {
-        actions = {
-            nop_3;
-        }
-        key = {
-            meta.meter_metadata.packet_color: exact;
-            standard_metadata.ingress_port  : exact;
-        }
-        size = 1024;
-        @name(".storm_control_stats") counters = direct_counter(CounterType.packets);
-    }'''
-table_def["storm_control_stats_0"] = storm_control_stats_0_content
+# storm_control_stats_0_content = '''
+#     direct_counter(CounterType.packets) storm_control_stats;
+#     action nop_3() {
+#         storm_control_stats.count();
+#     }
+#     table storm_control_stats_0 {
+#         actions = {
+#             nop_3;
+#         }
+#         key = {
+#             meta.meter_metadata.packet_color: exact;
+#             standard_metadata.ingress_port  : exact;
+#         }
+#         size = 1024;
+#         @name(".storm_control_stats") counters = direct_counter(CounterType.packets);
+#     }'''
+# table_def["storm_control_stats_0"] = storm_control_stats_0_content
 
 fwd_result_content = '''
     action set_l2_redirect_action() {
@@ -2443,7 +2427,6 @@ traffic_class_content = '''
     }
     table traffic_class {
         actions = {
-            
             set_icos;
             set_queue;
             set_icos_and_queue;
@@ -2456,18 +2439,18 @@ traffic_class_content = '''
     }'''
 table_def["traffic_class"] = traffic_class_content
 
-drop_stats_0_content = '''
-    counter(32w1024, CounterType.packets) drop_stats_2;
-    action drop_stats_update() {
-        drop_stats_2.count((bit<32>)(bit<32>)meta.ingress_metadata.drop_reason);
-    }
-    table drop_stats_0 {
-        actions = {
-            drop_stats_update;
-        }
-        size = 1024;
-    }'''
-table_def["drop_stats_0"] = drop_stats_0_content
+# drop_stats_0_content = '''
+#     counter(32w1024, CounterType.packets) drop_stats_2;
+#     action drop_stats_update() {
+#         drop_stats_2.count((bit<32>)(bit<32>)meta.ingress_metadata.drop_reason);
+#     }
+#     table drop_stats_0 {
+#         actions = {
+#             drop_stats_update;
+#         }
+#         size = 1024;
+#     }'''
+# table_def["drop_stats_0"] = drop_stats_0_content
 
 system_acl_content = '''
     action copy_to_cpu(bit<5> qid, bit<32> meter_id, bit<3> icos) {
