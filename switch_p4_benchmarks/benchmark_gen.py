@@ -4,7 +4,7 @@ import random
 
 table_list = ["ingress_port_mapping", "ingress_port_properties", "validate_outer_ethernet", "validate_outer_ipv4_packet", "validate_outer_ipv6_packet",
         "validate_mpls_packet", "switch_config_params", "port_vlan_mapping", "spanning_tree", "ingress_qos_map_dscp", "ingress_qos_map_pcp",
-        "ipsg", "ipsg_permit_special", "int_terminate", "int_sink_update_outer", "int_source", "sflow_ing_take_sample", "sflow_ingress",
+        "ipsg_permit_special", "int_terminate", "int_sink_update_outer", "int_source", "sflow_ing_take_sample", "sflow_ingress",
         "adjust_lkp_fields", "outer_rmac", "tunnel", "tunnel_lookup_miss_0", "fabric_ingress_dst_lkp", "fabric_ingress_src_lkp", "native_packet_over_fabric",
         "ipv4_dest_vtep", "ipv4_src_vtep", "ipv6_dest_vtep", "ipv6_src_vtep", "mpls_0", "outer_ipv4_multicast", "outer_ipv4_multicast_star_g",
         "outer_ipv6_multicast", "outer_ipv6_multicast_star_g", "storm_control", "validate_packet", "ingress_l4_dst_port", "ingress_l4_src_port", "dmac", "smac", "mac_acl",
@@ -350,22 +350,22 @@ ingress_qos_map_pcp_content = '''
     }'''
 table_def["ingress_qos_map_pcp"] = ingress_qos_map_pcp_content
 
-ipsg_content = '''
-    action on_miss() {
-    }
-    table ipsg {
-        actions = {
-            on_miss;
-        }
-        key = {
-            meta.ingress_metadata.ifindex : exact;
-            meta.ingress_metadata.bd      : exact;
-            meta.l2_metadata.lkp_mac_sa   : exact;
-            meta.ipv4_metadata.lkp_ipv4_sa: exact;
-        }
-        size = 1024;
-    }'''
-table_def["ipsg"] = ipsg_content
+# ipsg_content = '''
+#     action on_miss() {
+#     }
+#     table ipsg {
+#         actions = {
+#             on_miss;
+#         }
+#         key = {
+#             meta.ingress_metadata.ifindex : exact;
+#             meta.ingress_metadata.bd      : exact;
+#             meta.l2_metadata.lkp_mac_sa   : exact;
+#             meta.ipv4_metadata.lkp_ipv4_sa: exact;
+#         }
+#         size = 1024;
+#     }'''
+# table_def["ipsg"] = ipsg_content
 
 ipsg_permit_special_content = '''
     action ipsg_miss() {
@@ -534,7 +534,7 @@ outer_rmac_content = '''
     }
     table outer_rmac {
         actions = {
-            on_miss;
+            
             outer_rmac_hit;
         }
         key = {
@@ -807,7 +807,7 @@ ipv4_src_vtep_content = '''
     }
     table ipv4_src_vtep {
         actions = {
-            on_miss;
+            
             src_vtep_hit;
         }
         key = {
@@ -850,7 +850,7 @@ ipv6_src_vtep_content = '''
     }
     table ipv6_src_vtep {
         actions = {
-            on_miss;
+            
             src_vtep_hit;
         }
         key = {
@@ -940,7 +940,7 @@ outer_ipv4_multicast_content = '''
     table outer_ipv4_multicast {
         actions = {
             
-            on_miss;
+            
             outer_multicast_route_s_g_hit;
             outer_multicast_bridge_s_g_hit;
         }
@@ -1007,7 +1007,7 @@ outer_ipv6_multicast_content = '''
     table outer_ipv6_multicast {
         actions = {
             
-            on_miss;
+            
             outer_multicast_route_s_g_hit;
             outer_multicast_bridge_s_g_hit;
         }
@@ -1519,7 +1519,7 @@ ipv4_urpf_content = '''
     }
     table ipv4_urpf {
         actions = {
-            on_miss;
+            
             ipv4_urpf_hit;
         }
         key = {
@@ -1566,7 +1566,7 @@ ipv4_fib_content = '''
         meta.l3_metadata.fib_next
     table ipv4_fib {
         actions = {
-            on_miss;
+            
             fib_hit_nexthop;
             fib_hit_ecmp;
         }
@@ -1594,7 +1594,7 @@ ipv4_fib_lpm_content = '''
     }
     table ipv4_fib_lpm {
         actions = {
-            on_miss;
+            
             fib_hit_nexthop;
             fib_hit_ecmp;
         }
@@ -1672,7 +1672,7 @@ ipv6_urpf_content = '''
     }
     table ipv6_urpf {
         actions = {
-            on_miss;
+            
             ipv6_urpf_hit;
         }
         key = {
@@ -1720,7 +1720,7 @@ ipv6_fib_content = '''
     }
     @name(".ipv6_fib") table ipv6_fib {
         actions = {
-            on_miss;
+            
             fib_hit_nexthop;
             fib_hit_ecmp;
         }
@@ -1747,7 +1747,7 @@ ipv6_fib_lpm_content = '''
     }
     table ipv6_fib_lpm {
         actions = {
-            on_miss;
+            
             fib_hit_nexthop;
             fib_hit_ecmp;
         }
@@ -1785,7 +1785,7 @@ ipv4_multicast_bridge_content = '''
     }
     table ipv4_multicast_bridge {
         actions = {
-            on_miss;
+            
             multicast_bridge_s_g_hit;
         }
         key = {
@@ -1884,7 +1884,7 @@ ipv6_multicast_bridge_content = '''
     }
     table ipv6_multicast_bridge {
         actions = {
-            on_miss;
+            
             multicast_bridge_s_g_hit;
         }
         key = {
@@ -1985,7 +1985,7 @@ nat_dst_content = '''
     }
     table nat_dst {
         actions = {
-            on_miss;
+            
             set_dst_nat_nexthop_index;
         }
         key = {
@@ -2041,7 +2041,7 @@ nat_src_content = '''
     }
     table nat_src {
         actions = {
-            on_miss;
+            
             set_src_nat_rewrite_index;
         }
         key = {
@@ -2065,7 +2065,7 @@ nat_twice_content = '''
     }
     table nat_twice {
         actions = {
-            on_miss;
+            
             set_twice_nat_nexthop_index;
         }
         key = {
