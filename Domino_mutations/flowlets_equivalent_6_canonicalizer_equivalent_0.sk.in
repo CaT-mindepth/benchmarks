@@ -1,0 +1,2 @@
+processing pass 0: int_type_checker
+ERROR ERROR CLANG ERROR: expected identifier or '('

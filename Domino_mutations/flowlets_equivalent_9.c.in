@@ -1,0 +1,65 @@
+processing pass 0: int_type_checker
+program: int last_time[8000] = {0};int saved_hop[8000] = {0};struct Packet{
+int sport;int dport;int new_hop;int arrival;int next_hop;int id;};void flowlet( struct Packet pkt) {if (1==1&&1==1&&pkt.arrival-last_time[pkt.id]>5&&1==1&&1==1) {saved_hop[pkt.id]=pkt.new_hop;;;; };last_time[pkt.id]=pkt.arrival;pkt.next_hop=saved_hop[pkt.id];}
+...pass 1 done.
+processing pass 1: desugar_comp_asgn
+program: int last_time[8000] = {0};int saved_hop[8000] = {0};struct Packet{
+int sport;int dport;int new_hop;int arrival;int next_hop;int id;};void flowlet( struct Packet pkt) {if (1==1&&1==1&&pkt.arrival-last_time[pkt.id]>5&&1==1&&1==1) {saved_hop[pkt.id]=pkt.new_hop;;;;;;;; };;;last_time[pkt.id]=pkt.arrival;pkt.next_hop=saved_hop[pkt.id];}
+...pass 2 done.
+processing pass 2: if_converter
+if_convert: visiting statemenent saved_hop[pkt.id] = pkt.new_hop
+if_convert: visiting statemenent last_time[pkt.id] = pkt.arrival
+if_convert: visiting statemenent pkt.next_hop = saved_hop[pkt.id]
+program: int last_time[8000] = {0};int saved_hop[8000] = {0};struct Packet{
+int sport;int dport;int new_hop;int arrival;int next_hop;int id;int _br_tmp0;};void flowlet( struct Packet pkt) {pkt._br_tmp0 = (1 ? (1 == 1 && 1 == 1 && pkt.arrival - last_time[pkt.id] > 5 && 1 == 1 && 1 == 1) : 0);saved_hop[pkt.id] = ((1 && pkt._br_tmp0) ? (pkt.new_hop) :  saved_hop[pkt.id]);last_time[pkt.id] = (1 ? (pkt.arrival) :  last_time[pkt.id]);pkt.next_hop = (1 ? (saved_hop[pkt.id]) :  pkt.next_hop);}
+...pass 3 done.
+processing pass 3: algebra_simplify
+program: int last_time[8000] = {0};int saved_hop[8000] = {0};struct Packet{
+int sport;int dport;int new_hop;int arrival;int next_hop;int id;int _br_tmp0;};void flowlet( struct Packet pkt) {pkt._br_tmp0=((pkt.arrival-last_time[pkt.id]>5));saved_hop[pkt.id]=((pkt._br_tmp0) ? (pkt.new_hop) : saved_hop[pkt.id]);last_time[pkt.id]=((pkt.arrival));pkt.next_hop=((saved_hop[pkt.id]));}
+...pass 4 done.
+processing pass 4: array_validator
+program: int last_time[8000] = {0};int saved_hop[8000] = {0};struct Packet{
+int sport;int dport;int new_hop;int arrival;int next_hop;int id;int _br_tmp0;};void flowlet( struct Packet pkt) {pkt._br_tmp0=((pkt.arrival-last_time[pkt.id]>5));saved_hop[pkt.id]=((pkt._br_tmp0) ? (pkt.new_hop) : saved_hop[pkt.id]);last_time[pkt.id]=((pkt.arrival));pkt.next_hop=((saved_hop[pkt.id]));}
+...pass 5 done.
+processing pass 5: stateful_flanks
+program: int last_time[8000] = {0};int saved_hop[8000] = {0};struct Packet{
+int sport;int dport;int new_hop;int arrival;int next_hop;int id;int _br_tmp0;int saved_hop0;int id0;int last_time0;int id1;};void flowlet( struct Packet pkt) {pkt.id0 = (pkt._br_tmp0) ? (pkt.new_hop) : saved_hop[pkt.id];pkt.saved_hop0 = saved_hop[pkt.id0];pkt.id1 = pkt.arrival;pkt.last_time0 = last_time[pkt.id1];
+
+pkt._br_tmp0 = ((pkt.arrival-pkt.last_time0>5));pkt.saved_hop0 = ((pkt._br_tmp0) ? (pkt.new_hop) : pkt.saved_hop0);pkt.last_time0 = ((pkt.arrival));pkt.next_hop = ((pkt.saved_hop0));
+
+saved_hop[pkt.id0] = pkt.saved_hop0;last_time[pkt.id1] = pkt.last_time0;}
+...pass 6 done.
+processing pass 6: ssa
+program: int last_time[8000] = {0};int saved_hop[8000] = {0};struct Packet{
+int sport;int dport;int new_hop;int arrival;int next_hop;int id;int _br_tmp0;int saved_hop0;int id0;int last_time0;int id1;int id00;int saved_hop00;int id10;int last_time00;int _br_tmp00;int saved_hop01;int last_time01;int next_hop0;};void flowlet( struct Packet pkt) {pkt.id00 = (pkt._br_tmp0) ? (pkt.new_hop) : saved_hop[pkt.id];pkt.saved_hop00 = saved_hop[pkt.id00];pkt.id10 = pkt.arrival;pkt.last_time00 = last_time[pkt.id10];pkt._br_tmp00 = ((pkt.arrival-pkt.last_time00>5));pkt.saved_hop01 = ((pkt._br_tmp00) ? (pkt.new_hop) : pkt.saved_hop00);pkt.last_time01 = ((pkt.arrival));pkt.next_hop0 = ((pkt.saved_hop01));saved_hop[pkt.id00] = pkt.saved_hop01;last_time[pkt.id10] = pkt.last_time01;}
+...pass 7 done.
+processing pass 7: expr_propagater
+program: int last_time[8000] = {0};int saved_hop[8000] = {0};struct Packet{
+int sport;int dport;int new_hop;int arrival;int next_hop;int id;int _br_tmp0;int saved_hop0;int id0;int last_time0;int id1;int id00;int saved_hop00;int id10;int last_time00;int _br_tmp00;int saved_hop01;int last_time01;int next_hop0;};void flowlet( struct Packet pkt) {pkt.id00=(pkt._br_tmp0) ? (pkt.new_hop) : saved_hop[pkt.id];pkt.saved_hop00=saved_hop[pkt.id00];pkt.id10=pkt.arrival;pkt.last_time00=last_time[pkt.id10];pkt._br_tmp00=pkt.arrival - pkt.last_time00 > 5;pkt.saved_hop01=(pkt._br_tmp00) ? (pkt.new_hop) : pkt.saved_hop00;pkt.last_time01=pkt.arrival;pkt.next_hop0=(pkt._br_tmp00) ? (pkt.new_hop) : pkt.saved_hop00;saved_hop[pkt.id00]=(pkt._br_tmp00) ? (pkt.new_hop) : pkt.saved_hop00;last_time[pkt.id10]=pkt.arrival;}
+...pass 8 done.
+processing pass 8: expr_flattener
+program: int last_time[8000] = {0};int saved_hop[8000] = {0};struct Packet{
+int sport;int dport;int new_hop;int arrival;int next_hop;int id;int _br_tmp0;int saved_hop0;int id0;int last_time0;int id1;int id00;int saved_hop00;int id10;int last_time00;int _br_tmp00;int saved_hop01;int last_time01;int next_hop0;int tmp0;};void flowlet( struct Packet pkt) {pkt.id00 = (pkt._br_tmp0) ? (pkt.new_hop) : saved_hop[pkt.id];pkt.saved_hop00 = saved_hop[pkt.id00];pkt.id10 = pkt.arrival;pkt.last_time00 = last_time[pkt.id10];pkt.tmp0 = pkt.arrival - pkt.last_time00;pkt._br_tmp00 = pkt.tmp0 > 5;pkt.saved_hop01 = (pkt._br_tmp00) ? (pkt.new_hop) : pkt.saved_hop00;pkt.last_time01 = pkt.arrival;pkt.next_hop0 = (pkt._br_tmp00) ? (pkt.new_hop) : pkt.saved_hop00;saved_hop[pkt.id00] = (pkt._br_tmp00) ? (pkt.new_hop) : pkt.saved_hop00;last_time[pkt.id10] = pkt.arrival;}
+...pass 9 done.
+processing pass 9: cse
+program: int last_time[8000] = {0};int saved_hop[8000] = {0};struct Packet{
+int sport;int dport;int new_hop;int arrival;int next_hop;int id;int _br_tmp0;int saved_hop0;int id0;int last_time0;int id1;int id00;int saved_hop00;int id10;int last_time00;int _br_tmp00;int saved_hop01;int last_time01;int next_hop0;int tmp0;};void flowlet( struct Packet pkt) {}
+...pass 10 done.
+processing pass 10: dce
+program: int last_time[8000] = {0};int saved_hop[8000] = {0};struct Packet{
+int sport;int dport;int new_hop;int arrival;int next_hop;int id;int _br_tmp0;int saved_hop0;int id0;int last_time0;int id1;int id00;int saved_hop00;int id10;int last_time00;int _br_tmp00;int saved_hop01;int last_time01;int next_hop0;int tmp0;};void flowlet( struct Packet pkt) {}
+...pass 11 done.
+processing pass 11: dde
+program: struct Packet{
+};void flowlet( struct Packet pkt) {
+}
+
+...pass 12 done.
+processing pass 12: rename_pkt_fields
+# state variables start
+# state variables end
+# declarations end
+
+program: 
+...pass 13 done.
+
