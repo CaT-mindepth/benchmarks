@@ -1,0 +1,35 @@
+int p_id0;
+int p_last_ttl00;
+int p_last_ttl01;
+int p_last_ttl02;
+int p_rdata;
+int p_seen00;
+int p_seen01;
+int p_sport;
+int p_ttl;
+int p_ttl_change00;
+int p_ttl_change01;
+int p_ttl_change02;
+# state variables start
+int last_ttl;
+int seen;
+int ttl_change;
+# state variables end
+bit p__br_tmp11;
+bit p__br_tmp9;
+# declarations end
+p_last_ttl00 = last_ttl;
+p_ttl_change00 = ttl_change;
+p_seen00 = seen;
+p_id0 = p_rdata;
+p__br_tmp9 = (!(p_seen00==0))&&(p_last_ttl00!=p_ttl);
+p_last_ttl01 = p__br_tmp9 ? (p_ttl) : (p_last_ttl00);
+p_ttl_change01 = p__br_tmp9 ? (1+p_ttl_change00) : (p_ttl_change00);
+p__br_tmp11 = p_seen00==0;
+p_seen01 = p__br_tmp11 ? (1) : (p_seen00);
+p_last_ttl02 = p__br_tmp11 ? (p_ttl) : (p_last_ttl01);
+p_ttl_change02 = p__br_tmp11 ? (0) : (p_ttl_change01);
+last_ttl = p_last_ttl02;
+ttl_change = p_ttl_change02;
+seen = p_seen01;
+
