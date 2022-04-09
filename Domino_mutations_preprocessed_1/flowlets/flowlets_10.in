@@ -1,0 +1,25 @@
+int p_arrival;
+int p_dport;
+int p_id;
+int p_last_time00;
+int p_last_time01;
+int p_new_hop;
+int p_next_hop0;
+int p_saved_hop00;
+int p_saved_hop01;
+int p_sport;
+# state variables start
+int last_time;
+int saved_hop;
+# state variables end
+bit p__br_tmp1;
+# declarations end
+pkt_saved_hop00 = saved_hop;
+pkt_last_time00 = last_time;
+pkt__br_tmp1 = pkt_arrival-pkt_last_time00>5;
+pkt_saved_hop01 = pkt__br_tmp1 ? (pkt_new_hop) : (pkt_saved_hop00);
+pkt_last_time01 = pkt_arrival;
+pkt_next_hop0 = pkt_saved_hop01;
+saved_hop = pkt_saved_hop01;
+last_time = pkt_last_time01;
+
