@@ -1,0 +1,89 @@
+1. two table, benchmark1
+    pkt_fields_def = ['pkt_0','pkt_1','pkt_2','pkt_3','pkt_4','pkt_5','pkt_6','pkt_7','pkt_8','pkt_9','pkt_10','pkt_11','pkt_12','pkt_13','pkt_14','pkt_15','pkt_16']
+    tmp_fields_def = ['tmp_0'] # all temporary variables
+    stateful_var_def = ['s0', 's1'] # all stateful variables
+
+    table_act_dic = {'validate_outer_ipv4_packet':['set_valid_outer_ipv4_packet', 'set_malformed_outer_ipv4_packet'],
+                    'ingress_port_properties':['set_ingress_port_properties'],
+                    'marple_tcp_nmo_table':['marple_tcp_nmo']} #key: table name, val: list of actions
+    table_size_dic = {'ingress_port_properties':288, 
+                        'validate_outer_ipv4_packet':512,
+                        'marple_tcp_nmo_table':1} #key: table name, val: table size
+
+    action_alu_dic = {'ingress_port_properties': {'set_ingress_port_properties' : ['ALU1','ALU2','ALU3','ALU4','ALU5','ALU6','ALU7']},
+                        'validate_outer_ipv4_packet': {'set_valid_outer_ipv4_packet':['ALU1','ALU2','ALU3'], 'set_malformed_outer_ipv4_packet':['ALU1','ALU2']},
+                        'marple_tcp_nmo_table': {'marple_tcp_nmo':['ALU1','ALU2','ALU3']}} #key: table name, val: dictionary whose key is action name and whose value is list of alus
+    
+    #key: table name, val: dictionary whose key is action name and whose value is list of pairs showing dependency among alus
+    alu_dep_dic = {'marple_tcp_nmo_table': {'marple_tcp_nmo': [['ALU1','ALU2'], ['ALU2','ALU3']]}}
+    pkt_alu_dic = {
+        'pkt_0':[['ingress_port_properties','set_ingress_port_properties','ALU1']],
+        'pkt_1':[['ingress_port_properties','set_ingress_port_properties','ALU2']],
+        'pkt_2':[['ingress_port_properties','set_ingress_port_properties','ALU3']],
+        'pkt_3':[['ingress_port_properties','set_ingress_port_properties','ALU4']],
+        'pkt_4':[['ingress_port_properties','set_ingress_port_properties','ALU5']],
+        'pkt_5':[['ingress_port_properties','set_ingress_port_properties','ALU6']],
+        'pkt_6':[['ingress_port_properties','set_ingress_port_properties','ALU7']],
+        'pkt_8':[['validate_outer_ipv4_packet','set_valid_outer_ipv4_packet','ALU1']],
+        'pkt_9':[['validate_outer_ipv4_packet','set_valid_outer_ipv4_packet','ALU2']],
+        'pkt_11':[['validate_outer_ipv4_packet','set_valid_outer_ipv4_packet','ALU3']],
+        'pkt_13':[['validate_outer_ipv4_packet','set_malformed_outer_ipv4_packet','ALU1']],
+        'pkt_14':[['validate_outer_ipv4_packet','set_malformed_outer_ipv4_packet','ALU2']]
+    } #key: packet field in def, val: a list of list of size 3, [['table name', 'action name', 'alu name']], the corresponding alu modifies the key field
+    tmp_alu_dic = {'tmp_0':[['marple_tcp_nmo_table','marple_tcp_nmo','ALU2'],['marple_tcp_nmo_table','marple_tcp_nmo','ALU3']]
+                    } #key: tmp packet fields, val: a list of list of size 3, [['table name', 'action name', 'alu name']]
+    state_alu_dic = {'s0':[['marple_tcp_nmo_table','marple_tcp_nmo','ALU1'],['marple_tcp_nmo_table','marple_tcp_nmo','ALU2']],
+                    's1':[['marple_tcp_nmo_table','marple_tcp_nmo','ALU3']]} #key: packet field in def, val: a list of size 3, ['table name', 'action name', 'alu name'], the corresponding alu modifies the key stateful var
+    
+    match_dep = [['ingress_port_properties', 'marple_tcp_nmo_table']] #list of list, for each pari [T1, T2], T2 has match dependency on T1
+    action_dep = [] #list of list, for each pari [T1, T2], T2 has action dependency on T1
+    reverse_dep = [] #list of list, for each pari [T1, T2], T2 has reverse dependency on T1
+    successor_dep = []
+
+2. two table, benchmark2
+    pkt_fields_def = ['pkt_0','pkt_1','pkt_2','pkt_3','pkt_4','pkt_5','pkt_6','pkt_7','pkt_8','pkt_9','pkt_10','pkt_11','pkt_12','pkt_13','pkt_14','pkt_15','pkt_16','pkt_17','pkt_18','pkt_19','pkt_20','pkt_21','pkt_22','pkt_23','pkt_24','pkt_25','pkt_26','pkt_27','pkt_28','pkt_29','pkt_30','pkt_31','pkt_32','pkt_33','pkt_34']
+    tmp_fields_def = ['tmp_0']
+    stateful_var_def = ['s0', 's1']
+
+    table_act_dic = {'fabric_ingress_dst_lkp':['switch_fabric_unicast_packet','terminate_fabric_unicast_packet','switch_fabric_multicast_packet','terminate_fabric_multicast_packet','terminate_cpu_packet'],
+                    'storm_control':['set_storm_control_meter'],
+                    'marple_tcp_nmo_table':['marple_tcp_nmo']}
+    table_size_dic = {'fabric_ingress_dst_lkp':1,
+                        'storm_control':512,
+                        'marple_tcp_nmo_table':1}
+
+    action_alu_dic = {'fabric_ingress_dst_lkp': {'terminate_cpu_packet':['ALU1','ALU2','ALU3','ALU4'], 
+                                                'switch_fabric_unicast_packet':['ALU1','ALU2','ALU3'], 
+                                                'terminate_fabric_unicast_packet':['ALU1','ALU2','ALU3','ALU4','ALU5','ALU6','ALU7'],
+                                                'switch_fabric_multicast_packet':['ALU1','ALU2'], 
+                                                'terminate_fabric_multicast_packet':['ALU1','ALU2','ALU3','ALU4','ALU5','ALU6','ALU7']},
+                        'storm_control': {'set_storm_control_meter':['ALU1']},
+                        'marple_tcp_nmo_table': {'marple_tcp_nmo':['ALU1','ALU2','ALU3']}
+                        }
+    alu_dep_dic = {'marple_tcp_nmo_table': {'marple_tcp_nmo': [['ALU1','ALU2'], ['ALU2','ALU3']]}}
+
+    pkt_alu_dic = {
+        'pkt_0':[['fabric_ingress_dst_lkp','terminate_cpu_packet','ALU1'],['fabric_ingress_dst_lkp','terminate_fabric_unicast_packet','ALU1']],
+        'pkt_2':[['fabric_ingress_dst_lkp','terminate_cpu_packet','ALU2']],
+        'pkt_4':[['fabric_ingress_dst_lkp','terminate_cpu_packet','ALU3'],['fabric_ingress_dst_lkp','switch_fabric_multicast_packet','ALU2'],['fabric_ingress_dst_lkp','terminate_fabric_multicast_packet','ALU6']],
+        'pkt_6':[['fabric_ingress_dst_lkp','terminate_cpu_packet','ALU4'],['fabric_ingress_dst_lkp','terminate_fabric_unicast_packet','ALU7'],['fabric_ingress_dst_lkp','terminate_fabric_multicast_packet','ALU7']],
+        'pkt_8':[['fabric_ingress_dst_lkp','switch_fabric_unicast_packet','ALU1'],['fabric_ingress_dst_lkp','switch_fabric_multicast_packet','ALU1']],
+        'pkt_9':[['fabric_ingress_dst_lkp','switch_fabric_unicast_packet','ALU2']],
+        'pkt_11':[['fabric_ingress_dst_lkp','switch_fabric_unicast_packet','ALU3']],
+        'pkt_14':[['fabric_ingress_dst_lkp','terminate_fabric_unicast_packet','ALU2'],['fabric_ingress_dst_lkp','terminate_fabric_multicast_packet','ALU1']],
+        'pkt_16':[['fabric_ingress_dst_lkp','terminate_fabric_unicast_packet','ALU3'],['fabric_ingress_dst_lkp','terminate_fabric_multicast_packet','ALU2']],
+        'pkt_18':[['fabric_ingress_dst_lkp','terminate_fabric_unicast_packet','ALU4'],['fabric_ingress_dst_lkp','terminate_fabric_multicast_packet','ALU3']],
+        'pkt_20':[['fabric_ingress_dst_lkp','terminate_fabric_unicast_packet','ALU5'],['fabric_ingress_dst_lkp','terminate_fabric_multicast_packet','ALU4']],
+        'pkt_22':[['fabric_ingress_dst_lkp','terminate_fabric_unicast_packet','ALU6'],['fabric_ingress_dst_lkp','terminate_fabric_multicast_packet','ALU5']],
+        'pkt_32':[['storm_control','set_storm_control_meter','ALU1']],
+    }
+    tmp_alu_dic = {'tmp_0':[['marple_tcp_nmo_table','marple_tcp_nmo','ALU2'],['marple_tcp_nmo_table','marple_tcp_nmo','ALU3']]
+                    } #key: tmp packet fields, val: a list of list of size 3, [['table name', 'action name', 'alu name']]
+    state_alu_dic = {'s0':[['marple_tcp_nmo_table','marple_tcp_nmo','ALU1'],['marple_tcp_nmo_table','marple_tcp_nmo','ALU2']],
+                    's1':[['marple_tcp_nmo_table','marple_tcp_nmo','ALU3']]} #key: packet field in def, val: a list of size 3, ['table name', 'action name', 'alu name'], the corresponding alu modifies the key stateful var
+    match_dep = [['fabric_ingress_dst_lkp', 'marple_tcp_nmo_table']] #list of list, for each pari [T1, T2], T2 has match dependency on T1
+    action_dep = [] #list of list, for each pari [T1, T2], T2 has action dependency on T1
+    reverse_dep = [] #list of list, for each pari [T1, T2], T2 has reverse dependency on T1
+    successor_dep = []
+
+
