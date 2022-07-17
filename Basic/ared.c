@@ -13,7 +13,8 @@ struct Packet {
 
 int q_avg = 0;
 int alpha = 1;
-int beta = 2; // 1/0.9 = 1.11, but round up to 2.
+// 1/0.9 = 1.11, but round up to 2.
+#define BETA 2
 int max_p = 0;
 
 
@@ -29,7 +30,7 @@ void func(struct Packet p) {
 
   if (q_avg < 50 && max_p >= 1) {
     p.mark = 0;
-    max_p = max_p / beta; // equivalent to max_p * 0.5
+    max_p = max_p / BETA; // equivalent to max_p * 0.5
   } else if (q_avg > 100 && max_p <= 5) {
     p.mark = 1;
     max_p = max_p + alpha;

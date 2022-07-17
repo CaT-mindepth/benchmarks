@@ -1,16 +1,19 @@
-	avq.c
-	codel.c (doesn't map in domino paper because of sqrt(), removed)
-	ftp_monitoring.c
-	hash_pipe_first_stage.c
-	hash_pipe_second_stage.c
-	hula_forwarding.c
-	hula_probe.c
-	hull.c
-	majority.c  (newly added by us)
-	majority2.c (newly added by us)
-	majority3.c (newly added by us)
-	many_ip_domains.c
-	superspreader.c
-	tcTCM.c
-  rred.c (newly added by us)
-  ared.c (newly added by us)
+ name 		  			| preprocessor ok	| codegen ok 				| remarks
+ ared.c (newly added by us) 		| YES			| NO (pair, tofino) 			| a stateful node cannot be synthesized (logic too complex)
+		  			| 			| 					| problematic expression: (p_gain*p_q_avg00)+(1-p_gain)*p_q_inst
+ avq.c (domino)   			| YES			| NO (pair, tofino)	 		| stateful node too many inputs (3 stateless inputs to one node)  
+ codel.c (domino)  			| - 			| - 					| REMOVED  (doesn't map in domino paper because of sqrt())
+ ftp_monitoring.c (domino) 		| YES			| stateless timeout (pair)              | test pair, tofino in parallel mode on NYU machine 
+ hash_pipe_first_stage.c(domino)	|
+ hash_pipe_second_stage.c(domino)	|
+ hula_forwarding.c	(domino)
+ hula_probe.c (domino)
+ hull.c (domino)		     	| YES			| NO (pair)				| too many stateless inputs to one stateful node
+ majority.c  (newly added by us) 	| YES			| YES (pair, tofino), 1 stage	        | only synthesizable using pair/tofino since 
+					|			|					|    requires two stateful regs in one ALU.
+ majority2.c (newly added by us) 	| YES  			| YES (pair, tofino), 1 stage width 2   | width 2 since two stateful nodes aren't interfering
+ majority3.c (newly added by us) 	| YES			| YES (pair, tofino), 1 stage width 3   | width 3, same as above
+ many_ip_domains.c (domino)
+ superspreader.c  (domino)
+ tcTCM.c (domino)
+ rred.c (newly added by us)
