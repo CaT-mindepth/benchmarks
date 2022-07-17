@@ -1,0 +1,16 @@
+	avq.c
+	codel.c (doesn't map in domino paper because of sqrt(), removed)
+	ftp_monitoring.c
+	hash_pipe_first_stage.c
+	hash_pipe_second_stage.c
+	hula_forwarding.c
+	hula_probe.c
+	hull.c
+	majority.c  (newly added by us)
+	majority2.c (newly added by us)
+	majority3.c (newly added by us)
+	many_ip_domains.c
+	superspreader.c
+	tcTCM.c
+  rred.c (newly added by us)
+  ared.c (newly added by us)
