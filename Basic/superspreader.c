@@ -1,6 +1,6 @@
 // https://github.com/packet-transactions/domino-examples/blob/master/generalize/superspreader.c 
-#define THRESHOLD 1000
-#define ARRAY_SIZE 1000000
+#define THRESHOLD 10
+#define ARRAY_SIZE 10
 
 struct Packet {
   int srcip;

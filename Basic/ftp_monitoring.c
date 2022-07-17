@@ -1,5 +1,5 @@
 // https://github.com/packet-transactions/domino-examples/blob/master/generalize/ftp_monitoring.c
-#define ARRAY_SIZE 10000000
+#define ARRAY_SIZE 10
 
 struct Packet {
   int drop;

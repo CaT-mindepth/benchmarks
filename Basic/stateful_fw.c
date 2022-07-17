@@ -1,5 +1,5 @@
 #define ARRAY_SIZE 1000000
-#define VALID_IP 102
+#define VALID_IP 20
 
 struct Packet {
   int drop;

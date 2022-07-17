@@ -1,6 +1,6 @@
 // https://github.com/packet-transactions/domino-examples/blob/master/generalize/many_ip_domains.c
-#define ARRAY_SIZE 1000000
-#define THRESHOLD 1000
+#define ARRAY_SIZE 10
+#define THRESHOLD 5
 
 // Note that flipping domains and IPs still allows this
 // example to work (SNAP-Policy 2)
@@ -27,7 +27,7 @@ void func(struct Packet dns) {
   dns.rdata = dns.rdata;
 
   // row-indexed 2D array implemented as a 1 D array
-  dns.dip_index = dns.rdata * 1000 + dns.qname;
+  dns.dip_index = dns.rdata * 10 + dns.qname;
   // If this domain name (qname) + IP pair (rdata) has not been seen before
   if (domain_ip_pair[dns.dip_index] == 0) {
     // Increase number of the domains for this IP address (rdata)

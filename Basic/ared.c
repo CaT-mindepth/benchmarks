@@ -34,7 +34,7 @@ void func(struct Packet p) {
     p.mark = 1;
     max_p = max_p + alpha;
   } else {
-    p.prob = (q_avg - 50) * 100000 / (100 - 50);
+    p.prob = (q_avg - 50) * 10 * 100 * 100 / (100 - 50);
     p.mark = p.prob;
   }
 }

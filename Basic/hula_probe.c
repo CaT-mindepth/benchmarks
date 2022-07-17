@@ -3,8 +3,8 @@
 // lazily synced up to the ingress pipeline.
 
 // Constants
-#define NUM_TORS 1000
-#define KEEP_ALIVE_THRESH 20
+#define NUM_TORS 10
+#define KEEP_ALIVE_THRESH 2
 
 // Data is load balanced using congestion-aware flowlet load balancing
 // These are only the fields in the HULA probe packets.
@@ -24,7 +24,6 @@ int best_hop[NUM_TORS] = {0}; // best next hop for each dst TOR
 
 // This is triggered by the arrival of probe packets
 void func(struct Packet p) {
-  // TODO: Fix compiler
   p.dst_tor = p.dst_tor;
 
   // Set path utilization to minimum of current path utilization and link util

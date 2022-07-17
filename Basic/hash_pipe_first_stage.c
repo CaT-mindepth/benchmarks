@@ -1,6 +1,6 @@
 // from https://github.com/packet-transactions/domino-examples/blob/master/generalize/hash_pipe_first_stage.c
-#include "hashes.h"
-#define ARRAY_SIZE 1000000
+// #include "hashes.h"
+#define ARRAY_SIZE 10
 
 struct Packet {
   int loc;    // location in array
@@ -21,7 +21,8 @@ int array1val[ARRAY_SIZE] = {0};
 // p.terminate determines if the downstream stages run
 void func(struct Packet p) {
  // First stage
- p.loc = hash2(p.ikey, p.ikey); // Compute location using hash
+ // ruijief: remove hash call since we lack hash computing abilities for now.
+ p.loc = p.loc; // Compute location using hash
  if (array1key[p.loc] == p.ikey) { // if this key already exists
    array1val[p.loc] = array1val[p.loc] + 1; // increment
    p.terminate = 1;

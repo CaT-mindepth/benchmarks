@@ -15,6 +15,9 @@ struct Packet {
   int prob;
   int gain;
   int last_arrival;
+  int arrival_time;
+  // temp var
+  int t_max;
 };
 
 int q_avg = 0;
@@ -24,11 +27,16 @@ int t2;
 int t_star = 10; // 10 ms
 int indicator = 0; // RRED paper uses bloom filter with N bins with flows from different sources, we just use one.
                    // Hence, it is naturally the max of all N bins.
-#define MAX(a, b) ((a)<(b))?(b):(a)
 #define INRANGE(a,low,hi) (((a)>=(low))&&((a)<=(hi)))
 void func(struct Packet p) {
-  int t_max = MAX(t1,t2);
-  if (INRANGE(p.arrival_time, t_max, t_max + t_star)) {
+  // max(t1, t2)
+  if (t1 < t2) {
+    p.t_max = t2;
+  } else  {
+    p.t_max = t1;
+  }
+
+  if (INRANGE(p.arrival_time, p.t_max, p.t_max + t_star)) {
     // reduce local indicator by 1 for each bin corresponding to f
     indicator = indicator - 1;
   } else {

@@ -4,9 +4,9 @@
 // lazily synced up to the ingress pipeline.
 
 // Constants
-#define NUM_TORS     1000
-#define NUM_FLOWLETS 1000
-#define FLOWLET_TOUT 1000
+#define NUM_TORS     10
+#define NUM_FLOWLETS 10
+#define FLOWLET_TOUT 10
 
 // Data is load balanced using congestion-aware flowlet load balancing
 struct Packet {
@@ -24,7 +24,6 @@ int flowlet_hop[NUM_FLOWLETS] = {0}; // next hop for each flowlet, update on new
 
 // This is triggered by the arrival of data packets
 void func(struct Packet p) {
-  // TODO: compiler bug
   p.flow_hash = p.flow_hash;
   p.meta_data_dst_tor = p.meta_data_dst_tor;
 
